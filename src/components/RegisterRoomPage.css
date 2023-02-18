@@ -1,0 +1,9 @@
+.sign-in-alert-box {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.sign-in-alert {
+  margin-top: 30vh;
+}
