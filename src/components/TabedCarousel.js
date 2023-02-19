@@ -1,15 +1,20 @@
 import React from "react";
 
 function TabedCarousel(props) {
+  let slideId = 0;
   return (
-    <div id={props.id} class="carousel slide">
+    <div
+      id={props.id}
+      className="carousel slide"
+      style={{ userSelect: "none" }}
+    >
       <div
         style={{
           display: "flex",
           justifyContent: "center",
           marginBottom: "5px",
-          marginLeft: "15%",
-          marginRight: "15%",
+          // marginLeft: "15%",
+          // marginRight: "15%",
         }}
       >
         {props.tabs.map((tab, id) => (
@@ -20,30 +25,41 @@ function TabedCarousel(props) {
             }}
             key={id}
           >
-            <h3>{tab}</h3>
+            <h3>{tab.name}</h3>
           </div>
         ))}
       </div>
-      <div class="carousel-indicators" style={{ top: "30px" }}>
+      <div
+        className="carousel-indicators"
+        style={{
+          top: "30px",
+          bottom: "inherit",
+          marginLeft: "0px",
+          marginRight: "0px",
+        }}
+      >
         {props.tabs.map((tab, id) => {
           let activeClass = "";
           if (id === 0) {
             activeClass = "active";
           }
-          return (
+
+          return [...Array(tab.count).keys()].map((el) => (
             <button
-              key={id}
+              key={slideId}
               type="button"
               data-bs-target={`#${props.id}`}
-              data-bs-slide-to={`${id}`}
+              data-bs-slide-to={`${slideId}`}
               className={activeClass}
-              aria-label={`Slide ${id + 1}`}
-              style={{ width: `${100 / props.tabs.length}%` }}
+              aria-label={`Slide ${++slideId}`}
+              style={{
+                width: `${100 / props.tabs.length / tab.count}%`,
+              }}
             ></button>
-          );
+          ));
         })}
       </div>
-      <div class="carousel-inner">
+      <div className="carousel-inner">
         {props.children.map((child, id) => {
           let styleClass = "carousel-item ";
           if (id === 0) {
@@ -58,17 +74,20 @@ function TabedCarousel(props) {
       </div>
       <div style={{ display: "flex" }}>
         <button
-          class="carousel-control-prev"
+          className="carousel-control-prev"
           type="button"
           data-bs-target={`#${props.id}`}
           data-bs-slide="prev"
           style={{ position: "relative", border: "2px solid black" }}
         >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
+          <span
+            className="carousel-control-prev-icon"
+            aria-hidden="true"
+          ></span>
+          <span className="visually-hidden">Previous</span>
         </button>
         <button
-          class="carousel-control-next "
+          className="carousel-control-next "
           type="button"
           data-bs-target={`#${props.id}`}
           data-bs-slide="next"
