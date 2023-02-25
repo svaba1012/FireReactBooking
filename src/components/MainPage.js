@@ -1,7 +1,12 @@
 import React from "react";
+import SearchForm from "./SearchForm";
 
 function MainPage() {
-  return <div>Main Page</div>;
+  return (
+    <div>
+      <SearchForm onSubmit={() => {}} validate={() => {}} flex />
+    </div>
+  );
 }
 
 export default MainPage;

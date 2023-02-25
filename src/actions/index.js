@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   endAt,
   getDocs,
@@ -8,8 +9,10 @@ import {
   startAt,
   where,
 } from "firebase/firestore";
-import { db } from "../config/firebase";
-import { SEARCH_LOCATIONS, SEARCH_ROOMS } from "./types";
+import { db, storage } from "../config/firebase";
+import { INSERT_ROOM, SEARCH_LOCATIONS, SEARCH_ROOMS } from "./types";
+import { v4 } from "uuid";
+import { ref, uploadBytes } from "firebase/storage";
 
 const MAX_FETCH_OBJ = 5;
 
@@ -128,4 +131,29 @@ export const searchLocations = (searchStr) => async (dispatch) => {
     return { ...el.data(), id: el.id };
   });
   dispatch({ type: SEARCH_LOCATIONS, payload: locations });
+};
+
+export const insertRoom = (room) => async (dispatch) => {
+  const roomRef = collection(db, "rooms");
+  let res;
+  let picsFolder = `pics-${v4()}`;
+  await Promise.all(
+    room.pics.map(async (pic) => {
+      const picRef = ref(storage, `${picsFolder}/pic-${v4()}`);
+      try {
+        await uploadBytes(picRef, pic);
+      } catch (e) {
+        console.error(e);
+      }
+    })
+  );
+  room.pics = picsFolder;
+  try {
+    res = await addDoc(roomRef, room);
+  } catch (e) {
+    console.error(e);
+    res = e;
+  }
+  console.log("ENDE");
+  dispatch({ type: INSERT_ROOM, payload: res });
 };

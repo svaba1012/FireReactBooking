@@ -54,12 +54,18 @@ function TabedCarousel(props) {
               aria-label={`Slide ${++slideId}`}
               style={{
                 width: `${100 / props.tabs.length / tab.count}%`,
+                textIndent: "0px",
               }}
-            ></button>
+            >
+              {props.getTabText(tab.validTab[el])}
+            </button>
           ));
         })}
       </div>
-      <div className="carousel-inner">
+      <div
+        className="carousel-inner"
+        style={{ minHeight: "70vh", marginTop: "30px" }}
+      >
         {props.children.map((child, id) => {
           let styleClass = "carousel-item ";
           if (id === 0) {

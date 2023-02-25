@@ -204,6 +204,10 @@ function NumberOfPeopleInput() {
 }
 
 function SearchForm(props) {
+  let formStyle = props.flex
+    ? { display: "flex", justifyContent: "space-around" }
+    : {};
+
   return (
     <Form
       onSubmit={(values) => {
@@ -213,15 +217,16 @@ function SearchForm(props) {
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <h2>Pretrazi</h2>
-
-          <Field name="location" component={LocationInput} />
-          <Field name="period" component={PeriodInput} />
-          <Field name="numberOfPeople" component={NumberOfPeopleInput} />
+          <div style={formStyle}>
+            <Field name="location" component={LocationInput} />
+            <Field name="period" component={PeriodInput} />
+            <Field name="numberOfPeople" component={NumberOfPeopleInput} />
+          </div>
 
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ marginTop: "10px" }}
+            style={{ marginTop: "10px", width: "100%" }}
           >
             <i class="bi bi-search"></i> Trazi
           </button>

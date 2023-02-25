@@ -4,21 +4,41 @@ import { Form } from "react-final-form";
 import MapSetLocation from "./MapSetLocation";
 import TabedCarousel from "./TabedCarousel";
 import { useDropzone } from "react-dropzone";
+import { connect } from "react-redux";
+import { insertRoom } from "../actions";
+import { useForm } from "react-final-form";
+import { useFormState } from "react-final-form";
 
 function classicInput(props) {
   let inputJsx;
+  let cssClass = "form-control ";
+  if (props.meta.touched && props.meta.error) {
+    cssClass += "is-invalid";
+  }
   if (props.inputType === "number") {
     inputJsx = (
-      <input
-        type={props.inputType}
-        className="form-control"
-        id={props.id}
-        min={props.min}
-      />
+      <div>
+        <input
+          type={props.inputType}
+          className={cssClass}
+          id={props.id}
+          min={props.min}
+          {...props.input}
+        />
+        <div className="invalid-feedback">{props.meta.error}</div>
+      </div>
     );
   } else {
     inputJsx = (
-      <input type={props.inputType} className="form-control" id={props.id} />
+      <div>
+        <input
+          type={props.inputType}
+          className={cssClass}
+          id={props.id}
+          {...props.input}
+        />
+        <div className="invalid-feedback">{props.meta.error}</div>
+      </div>
     );
   }
 
@@ -33,14 +53,14 @@ function classicInput(props) {
 function selectInput(props) {
   return (
     <div key={props.key}>
-      <label for={props.name} class="form-label">
+      <label for={props.name} className="form-label">
         {props.label}
       </label>
       <select
         id={props.name}
-        class="form-select form-select-lg mb-3"
+        className="form-select form-select-lg mb-3"
         aria-label=".form-select-lg example"
-        defaultValue={0}
+        {...props.input}
       >
         {/* <option selected>{props.initText}</option> */}
         {props.options.map((option, id) => (
@@ -55,9 +75,15 @@ function selectInput(props) {
 
 function checkInput(props) {
   return (
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" id={props.id} />
-      <label class="form-check-label" for={props.id}>
+    <div className="form-check">
+      <input
+        className="form-check-input"
+        type="checkbox"
+        value=""
+        id={props.id}
+        {...props.input}
+      />
+      <label className="form-check-label" for={props.id}>
         {props.label}
       </label>
     </div>
@@ -74,10 +100,14 @@ function mapInput(props) {
 
 function PictureInput(props) {
   let [selectedFiles, setSelectedFiles] = useState([]);
+  let { change } = useForm();
+  // change("pics, selectedFiles");
   const dropZone = useDropzone({
     accept: { "image/png": [".png"] },
-    onDropAccepted: (acceptedFiles) =>
-      setSelectedFiles([...selectedFiles, ...acceptedFiles]),
+    onDropAccepted: async (acceptedFiles) => {
+      change("pics", [...selectedFiles, ...acceptedFiles]);
+      await setSelectedFiles([...selectedFiles, ...acceptedFiles]);
+    },
   });
   const {
     acceptedFiles,
@@ -87,14 +117,13 @@ function PictureInput(props) {
     isFocused,
     isDragReject,
   } = dropZone;
-  console.log(dropZone);
 
   const baseStyle = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: "20px",
+    padding: "20vh",
     borderWidth: 2,
     borderRadius: 2,
     borderColor: "#eeeeee",
@@ -133,13 +162,11 @@ function PictureInput(props) {
     </li>
   ));
 
-  console.log(selectedFiles);
-
   return (
     <section className="container">
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
+        <p>Prevuci ili klikni za ubacivanje slika</p>
       </div>
       <aside>
         <h4>Files</h4>
@@ -214,6 +241,7 @@ function RegisterFormFirstTabFirst(props) {
         name="name"
         id="name"
         inputType="text"
+        label="Naziv smestaja"
       ></Field>
       <Field
         component={selectInput}
@@ -236,7 +264,7 @@ function RegisterFormFirstTabFirst(props) {
 function RegisterFormFirstTabSecond(props) {
   return (
     <div>
-      <Field component={mapInput} name="cords" id={props.mapId} />;
+      {/* <Field component={mapInput} name="cords" id={props.mapId} />; */}
     </div>
   );
 }
@@ -308,13 +336,22 @@ function RegisterFormSecondTabSecond(props) {
   ];
 
   return arrayChecks.map((el, superId) => {
+    let data = [
+      ["klima", "grejanje", "wifi", "parking"],
+      ["kuhinja", "cajnaKuhinja", "vesMasina"],
+      ["tv", "sauna", "miniBar", "djakuzi"],
+      ["terasa", "dvoriste"],
+      ["engleski", "nemacki", "srpski"],
+      ["pusenje", "ljubimci", "dogadjaji"],
+    ];
+
     return (
       <div key={superId}>
         <h5>{el.label}</h5>
         {el.checks.map((check, id) => (
           <div key={`${superId}-${id}`}>
             <Field
-              name={`check${superId}-${id}`}
+              name={data[superId][id]}
               id={`check${superId}-${id}`}
               component={checkInput}
               label={check}
@@ -383,40 +420,144 @@ function RegisterFormThirdTab(props) {
 }
 
 function RegisterFormForthTab(props) {
-  return <div>4. Tab</div>;
+  return (
+    <div>
+      <Field
+        name="pricePerNight"
+        component={classicInput}
+        id="price"
+        type="number"
+        min={0}
+        label="Cena nocenja po osobi"
+      ></Field>
+    </div>
+  );
 }
 
 function RegisterForm(props) {
+  const getValidateText = (validNum) => {
+    if (validNum === 0) {
+      return;
+    }
+    if (validNum === 1) {
+      return <i class="bi bi-check-circle-fill" style={{ color: "green" }}></i>;
+    } else {
+      return <i class="bi bi-x-circle-fill" style={{ color: "red" }}></i>;
+    }
+  };
+
+  let [tabs, setTabs] = useState([
+    { name: "Naziv i lokacija", count: 2, validTab: [0, 0] },
+    { name: "Pregled objekta", count: 3, validTab: [0, 1, 0] },
+    { name: "Slike", count: 1, validTab: [0] },
+    { name: "Cena", count: 1, validTab: [0] },
+  ]);
+
+  const setValidTab = (tabStates) => {
+    setTabs(
+      tabs.map((tab, id) => {
+        return { ...tab, validTab: tabStates[id] };
+      })
+    );
+  };
+
+  const validateInputs = (submiting, values) => {
+    let errors = {};
+    let tabStates = [[1, 1], [1, 1, 1], [1], [1]];
+    if (!values.name || values.name.length < 10) {
+      errors.name = "*Naziv smestaja mora biti duzine bar 10 slova";
+      if (submiting) {
+        tabStates[0][0] = -1;
+      }
+    }
+    if (values.pics) {
+      if (values.pics.length < 3) {
+        errors.pics = "*Minimalan broj slika je 3";
+        // setValidTab(-1, 2, 0);
+      }
+      if (values.pics.length > 10) {
+        errors.pics = "*Maksimalan broj slika je 10";
+        // setValidTab(-1, 2, 0);
+      }
+    } else {
+      errors.pics = "*Minimalan broj slika je 3";
+      // setValidTab(-1, 2, 0);
+    }
+
+    if (!values.numOfPeople || values.numOfPeople < 1) {
+      errors.numOfPeople = "*Unesite broj gostiju koji je veci od 0";
+      if (submiting) tabStates[1][0] = -1;
+    }
+    if (!values.numOfBracni || values.numOfBracni < 0) {
+      errors.numOfBracni =
+        "*Unesite broj bracnih kreveta koji nije negativan broj";
+      if (submiting) tabStates[1][0] = -1;
+    }
+    if (!values.numOfObican || values.numOfObican < 0) {
+      errors.numOfObican =
+        "*Unesite broj obicnih kreveta koji nije negativan broj";
+      if (submiting) tabStates[1][0] = -1;
+    }
+    if (!values.numOfKauc || values.numOfKauc < 0) {
+      errors.numOfKauc = "*Unesite broj kauca koji nije negativan broj";
+      if (submiting) tabStates[1][0] = -1;
+    }
+    if (!values.numOfBathrooms || values.numOfBathrooms < 0) {
+      errors.numOfBathrooms = "*Unesite broj kupatila koji nije negativan broj";
+      if (submiting) tabStates[1][0] = -1;
+    }
+    if (!values.area || values.area < 0) {
+      errors.area = "*Unesite povrsinu koja nije negativan broj";
+      if (submiting) tabStates[1][0] = -1;
+    }
+
+    if (!values.pricePerNight || values.pricePerNight < 0) {
+      errors.pricePerNight = "*Unesite cenu koja nije negativan broj";
+      if (submiting) tabStates[3][0] = -1;
+    }
+    if (submiting) {
+      setValidTab(tabStates);
+    }
+    return errors;
+  };
+
   return (
     <Form
       onSubmit={(values) => {
         console.log(values);
+        props.insertRoom(values);
       }}
-      validate={props.validate}
-      render={({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
-          <TabedCarousel
-            tabs={[
-              { name: "Naziv i lokacija", count: 2 },
-              { name: "Pregled objekta", count: 3 },
-              { name: "Slike", count: 1 },
-              { name: "Cena", count: 1 },
-            ]}
-            id="register-form-carousel"
-          >
-            <RegisterFormFirstTabFirst />
-            <RegisterFormFirstTabSecond mapId="map" />
+      validate={(values) => validateInputs(false, values)}
+      render={({ handleSubmit, values }) => {
+        return (
+          <form onSubmit={handleSubmit} noValidate>
+            <TabedCarousel
+              tabs={tabs}
+              id="register-form-carousel"
+              getTabText={getValidateText}
+            >
+              <RegisterFormFirstTabFirst />
+              <RegisterFormFirstTabSecond mapId="map" />
 
-            <RegisterFormSecondTabFirst />
-            <RegisterFormSecondTabSecond />
-            <RegisterFormSecondTabThird />
-            <RegisterFormThirdTab />
-            <RegisterFormForthTab />
-          </TabedCarousel>
-        </form>
-      )}
+              <RegisterFormSecondTabFirst />
+              <RegisterFormSecondTabSecond />
+              <RegisterFormSecondTabThird />
+              <RegisterFormThirdTab />
+              <RegisterFormForthTab />
+            </TabedCarousel>
+            <div>
+              <button
+                className="btn btn-primary"
+                onClick={() => validateInputs(true, values)}
+              >
+                Registruj
+              </button>
+            </div>
+          </form>
+        );
+      }}
     />
   );
 }
 
-export default RegisterForm;
+export default connect(null, { insertRoom })(RegisterForm);
