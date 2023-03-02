@@ -1,5 +1,5 @@
 import React from "react";
-import SearchForm from "./SearchForm";
+import SearchForm from "../forms/SearchForm";
 
 function MainPage() {
   return (

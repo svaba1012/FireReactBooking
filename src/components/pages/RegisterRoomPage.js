@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { auth } from "../config/firebase";
-import Auth from "./Auth";
-import RegisterForm from "./RegisterForm";
+import { auth } from "../../config/firebase";
+import Auth from "../Auth";
+import RegisterForm from "../forms/RegisterForm";
 import "./RegisterRoomPage.css";
 
 function RegisterRoomPage() {

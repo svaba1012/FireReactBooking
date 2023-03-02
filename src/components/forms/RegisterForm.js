@@ -1,239 +1,19 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Field } from "react-final-form";
 import { Form } from "react-final-form";
-import MapSetLocation from "./MapSetLocation";
-import TabedCarousel from "./TabedCarousel";
-import { useDropzone } from "react-dropzone";
+import TabedCarousel from "../TabedCarousel";
 import { connect } from "react-redux";
-import { insertRoom } from "../actions";
-import { useForm } from "react-final-form";
-import { useFormState } from "react-final-form";
-
-function classicInput(props) {
-  let inputJsx;
-  let cssClass = "form-control ";
-  if (props.meta.touched && props.meta.error) {
-    cssClass += "is-invalid";
-  }
-  if (props.inputType === "number") {
-    inputJsx = (
-      <div>
-        <input
-          type={props.inputType}
-          className={cssClass}
-          id={props.id}
-          min={props.min}
-          {...props.input}
-        />
-        <div className="invalid-feedback">{props.meta.error}</div>
-      </div>
-    );
-  } else {
-    inputJsx = (
-      <div>
-        <input
-          type={props.inputType}
-          className={cssClass}
-          id={props.id}
-          {...props.input}
-        />
-        <div className="invalid-feedback">{props.meta.error}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mb-3">
-      <label for={props.id}>{props.label}</label>
-      {inputJsx}
-    </div>
-  );
-}
-
-function selectInput(props) {
-  return (
-    <div key={props.key}>
-      <label for={props.name} className="form-label">
-        {props.label}
-      </label>
-      <select
-        id={props.name}
-        className="form-select form-select-lg mb-3"
-        aria-label=".form-select-lg example"
-        {...props.input}
-      >
-        {/* <option selected>{props.initText}</option> */}
-        {props.options.map((option, id) => (
-          <option value={id} key={id}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-function checkInput(props) {
-  return (
-    <div className="form-check">
-      <input
-        className="form-check-input"
-        type="checkbox"
-        value=""
-        id={props.id}
-        {...props.input}
-      />
-      <label className="form-check-label" for={props.id}>
-        {props.label}
-      </label>
-    </div>
-  );
-}
-
-function mapInput(props) {
-  return (
-    <div>
-      <MapSetLocation id={props.id} />
-    </div>
-  );
-}
-
-function PictureInput(props) {
-  let [selectedFiles, setSelectedFiles] = useState([]);
-  let { change } = useForm();
-  // change("pics, selectedFiles");
-  const dropZone = useDropzone({
-    accept: { "image/png": [".png"] },
-    onDropAccepted: async (acceptedFiles) => {
-      change("pics", [...selectedFiles, ...acceptedFiles]);
-      await setSelectedFiles([...selectedFiles, ...acceptedFiles]);
-    },
-  });
-  const {
-    acceptedFiles,
-    getRootProps,
-    getInputProps,
-    isDragAccept,
-    isFocused,
-    isDragReject,
-  } = dropZone;
-
-  const baseStyle = {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: "20vh",
-    borderWidth: 2,
-    borderRadius: 2,
-    borderColor: "#eeeeee",
-    borderStyle: "dashed",
-    // backgroundColor: "#fafafa",
-    color: "#bdbdbd",
-    outline: "none",
-    transition: "border .24s ease-in-out",
-  };
-
-  const focusedStyle = {
-    borderColor: "#2196f3",
-  };
-
-  const acceptStyle = {
-    borderColor: "#00e676",
-  };
-
-  const rejectStyle = {
-    borderColor: "#ff1744",
-  };
-
-  const style = useMemo(
-    () => ({
-      ...baseStyle,
-      ...(isFocused ? focusedStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {}),
-    }),
-    [isFocused, isDragAccept, isDragReject]
-  );
-
-  const files = selectedFiles.map((file) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ));
-
-  return (
-    <section className="container">
-      <div {...getRootProps({ style })}>
-        <input {...getInputProps()} />
-        <p>Prevuci ili klikni za ubacivanje slika</p>
-      </div>
-      <aside>
-        <h4>Files</h4>
-        <ul>{files}</ul>
-        <div
-          style={{
-            display: "flex",
-            marginBottom: "20px",
-            width: "100%",
-            flexWrap: "wrap",
-          }}
-        >
-          {selectedFiles.map((file, id) => {
-            let imgUrl = URL.createObjectURL(file);
-            return (
-              <div
-                style={{
-                  width: "40vh",
-                  position: "relative",
-                  marginRight: "20px",
-                  marginBottom: "20px",
-                }}
-              >
-                <img
-                  src={imgUrl}
-                  style={{
-                    width: "40vh",
-                    height: "40vh",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    padding: "5px",
-                    objectFit: "cover",
-                  }}
-                  key={id}
-                  alt="Slika"
-                ></img>
-                <div
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "5px",
-                    zIndex: 3,
-                  }}
-                  onClick={(e) => {
-                    URL.revokeObjectURL(file.preview);
-                    setSelectedFiles(selectedFiles.filter((el, i) => i !== id));
-                  }}
-                >
-                  <i
-                    class="bi bi-x-circle-fill"
-                    style={{
-                      color: "red",
-                      fontSize: "xx-large",
-                      cursor: "pointer",
-                    }}
-                  ></i>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </aside>
-    </section>
-  );
-}
+import { insertRoom, getLocations } from "../../actions";
+import classicInput from "./fields/classicInput";
+import checkInput from "./fields/checkInput";
+import selectInput from "./fields/selectInput";
+import mapInput from "./fields/mapInput";
+import PictureInput from "./fields/PictureInput";
 
 function RegisterFormFirstTabFirst(props) {
+  if (!props.locations) {
+    return;
+  }
   return (
     <div>
       <Field
@@ -252,8 +32,9 @@ function RegisterFormFirstTabFirst(props) {
       />
       <Field
         component={selectInput}
-        name="country"
-        options={["Srbija", "Srbija", "Srbija", "Srbija"]}
+        name="locationId"
+        options={props.locations.map((el) => el.name)}
+        selectValues={props.locations.map((el) => el.id)}
         label="Drzava"
         initText="Izaberite drzavu"
       />
@@ -435,6 +216,14 @@ function RegisterFormForthTab(props) {
 }
 
 function RegisterForm(props) {
+  useEffect(() => {
+    async function fetchData() {
+      await props.getLocations();
+    }
+    fetchData();
+  }, []);
+
+  console.log("lokacije" + props.locations);
   const getValidateText = (validNum) => {
     if (validNum === 0) {
       return;
@@ -536,7 +325,7 @@ function RegisterForm(props) {
               id="register-form-carousel"
               getTabText={getValidateText}
             >
-              <RegisterFormFirstTabFirst />
+              <RegisterFormFirstTabFirst locations={props.locations} />
               <RegisterFormFirstTabSecond mapId="map" />
 
               <RegisterFormSecondTabFirst />
@@ -560,4 +349,8 @@ function RegisterForm(props) {
   );
 }
 
-export default connect(null, { insertRoom })(RegisterForm);
+const mapState = (state) => {
+  return { locations: state.locations };
+};
+
+export default connect(mapState, { insertRoom, getLocations })(RegisterForm);

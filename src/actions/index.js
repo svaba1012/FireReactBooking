@@ -10,7 +10,14 @@ import {
   where,
 } from "firebase/firestore";
 import { db, storage } from "../config/firebase";
-import { INSERT_ROOM, SEARCH_LOCATIONS, SEARCH_ROOMS } from "./types";
+import {
+  GET_LOCATIONS,
+  GET_ROOM_BY_ID,
+  INSERT_ROOM,
+  RESERVE_ROOM,
+  SEARCH_LOCATIONS,
+  SEARCH_ROOMS,
+} from "./types";
 import { v4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 
@@ -156,4 +163,46 @@ export const insertRoom = (room) => async (dispatch) => {
   }
   console.log("ENDE");
   dispatch({ type: INSERT_ROOM, payload: res });
+};
+
+export const getRoomById = (id) => async (dispatch) => {
+  let roomRef = collection(db, "rooms");
+  let roomQuery = query(roomRef, where("__name__", "==", id));
+  let res = await getDocs(roomQuery);
+  let room = res.docs.map((el) => {
+    return { ...el.data(), id: el.id };
+  });
+  room = room[0];
+  let reservationRef = collection(db, "reservations");
+  let reservationQuery = query(reservationRef, where("roomId", "==", id));
+  res = await getDocs(reservationQuery);
+  let reservations = res.docs.map((el) => {
+    return { ...el.data(), id: el.id };
+  });
+  room.reservations = reservations;
+  dispatch({ type: GET_ROOM_BY_ID, payload: room });
+};
+
+export const getLocations = () => async (dispatch) => {
+  let locationRef = collection(db, "locations");
+  let res = await getDocs(locationRef);
+  let locations = res.docs.map((el) => {
+    return { ...el.data(), id: el.id };
+  });
+
+  dispatch({ type: GET_LOCATIONS, payload: locations });
+};
+
+export const reserveRoom = (room, dates) => async (dispatch, getState) => {
+  let reservationRef = collection(db, "reservations");
+  let reservation = {
+    startDate: dates.startDate.getTime() / 1000,
+    endDate: dates.endDate.getTime() / 1000,
+    roomId: room.id,
+    locationId: room.locationId,
+    userId: "",
+  };
+
+  await addDoc(reservationRef, reservation);
+  dispatch({ type: RESERVE_ROOM, payload: reservation });
 };

@@ -1,5 +1,11 @@
 import { combineReducers } from "redux";
-import { SEARCH_LOCATIONS, SEARCH_ROOMS } from "../actions/types";
+import {
+  GET_LOCATIONS,
+  GET_ROOM_BY_ID,
+  RESERVE_ROOM,
+  SEARCH_LOCATIONS,
+  SEARCH_ROOMS,
+} from "../actions/types";
 
 const searchRoomsReducer = (state = [], action) => {
   switch (action.type) {
@@ -19,9 +25,32 @@ const searchLocationReducer = (state = [], action) => {
   }
 };
 
+const roomReducer = (state = null, action) => {
+  switch (action.type) {
+    case GET_ROOM_BY_ID:
+      return action.payload;
+    case RESERVE_ROOM:
+      let newReservations = [...state.reservations].push(action.payload);
+      return { ...state, reservations: newReservations };
+    default:
+      return { ...state };
+  }
+};
+
+const locationReducer = (state = [], action) => {
+  switch (action.type) {
+    case GET_LOCATIONS:
+      return action.payload;
+    default:
+      return [...state];
+  }
+};
+
 const reducers = combineReducers({
   searchedRooms: searchRoomsReducer,
   searchedLocations: searchLocationReducer,
+  room: roomReducer,
+  locations: locationReducer,
 });
 
 export default reducers;

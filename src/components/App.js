@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import Auth from "./Auth";
 import Header from "./Header";
-import MainPage from "./MainPage";
+import MainPage from "./pages/MainPage";
 import { auth } from "../config/firebase";
-import RoomPage from "./RoomPage";
-import RegisterRoomPage from "./RegisterRoomPage";
+import RoomsPage from "./pages/RoomsPage";
+import RoomPage from "./pages/RoomPage";
+import RegisterRoomPage from "./pages/RegisterRoomPage";
 
 function App() {
   useEffect(() => {
@@ -19,8 +20,9 @@ function App() {
           <Header />
           <Routes>
             <Route element={<MainPage />} path="/" exact />
-            <Route element={<RoomPage />} path="/search" exact />
+            <Route element={<RoomsPage />} path="/search" exact />
             <Route element={<RegisterRoomPage />} path="/register-room" exact />
+            <Route element={<RoomPage />} path="/room/:id" />
           </Routes>
         </BrowserRouter>
       </div>

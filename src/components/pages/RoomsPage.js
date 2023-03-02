@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { searchRooms } from "../actions";
+import { searchRooms } from "../../actions";
 import { connect } from "react-redux";
-import RoomCard from "./RoomCard";
-import SearchForm from "./SearchForm";
+import { Link } from "react-router-dom";
+import RoomCard from "../RoomCard";
+import SearchForm from "../forms/SearchForm";
 
-function RoomPage(props) {
+function RoomsPage(props) {
   useEffect(() => {
     props.searchRooms();
   }, []);
@@ -17,7 +18,13 @@ function RoomPage(props) {
       <div class="col-9">
         <h2>Pronadjeno {props.rooms.length}</h2>
         {props.rooms.map((room, id) => (
-          <RoomCard room={room} key={id} />
+          <Link
+            key={id}
+            to={`/room/${room.id}`}
+            style={{ textDecoration: "inherit", color: "inherit" }}
+          >
+            <RoomCard room={room} />
+          </Link>
         ))}
       </div>
     </div>
@@ -28,4 +35,4 @@ const mapStateToProps = (state) => {
   return { rooms: state.searchedRooms };
 };
 
-export default connect(mapStateToProps, { searchRooms })(RoomPage);
+export default connect(mapStateToProps, { searchRooms })(RoomsPage);
