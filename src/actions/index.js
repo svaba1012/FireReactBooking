@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   endAt,
+  getCountFromServer,
   getDocs,
   limit,
   orderBy,
@@ -19,7 +20,7 @@ import {
   SEARCH_ROOMS,
 } from "./types";
 import { v4 } from "uuid";
-import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 
 const MAX_FETCH_OBJ = 5;
 
@@ -90,14 +91,10 @@ export const searchRooms =
       return { ...el.data(), id: el.id };
     });
     reservations = reservations.filter((res) => {
-      console.log(res.startDate < date.start && res.endDate > date.start);
-      console.log(res.startDate < date.end && res.endDate > date.end);
-      console.log(res.startDate > date.start && res.endDate < date.end);
-
       return (
-        (res.startDate < date.start && res.endDate > date.start) ||
-        (res.startDate < date.end && res.endDate > date.end) ||
-        (res.startDate > date.start && res.endDate < date.end)
+        (res.startDate <= date.start && res.endDate >= date.start) ||
+        (res.startDate <= date.end && res.endDate >= date.end) ||
+        (res.startDate >= date.start && res.endDate <= date.end)
       );
     });
 
@@ -137,6 +134,18 @@ export const searchLocations = (searchStr) => async (dispatch) => {
   let locations = querySnapshot.docs.map((el) => {
     return { ...el.data(), id: el.id };
   });
+
+  locations = await Promise.all(
+    locations.map(async (loc) => {
+      let roomRef = collection(db, "rooms");
+      let roomQuery = query(roomRef, where("locationId", "==", loc.id));
+      let snapshot = await getCountFromServer(roomQuery);
+      let roomsCount = snapshot.data().count;
+
+      return { ...loc, numOfRooms: roomsCount };
+    })
+  );
+
   dispatch({ type: SEARCH_LOCATIONS, payload: locations });
 };
 
@@ -180,6 +189,15 @@ export const getRoomById = (id) => async (dispatch) => {
     return { ...el.data(), id: el.id };
   });
   room.reservations = reservations;
+  let imagesRef = ref(storage, room.pics + "/");
+  let response = await listAll(imagesRef);
+  let images = await Promise.all(
+    response.items.map(async (el) => {
+      let url = await getDownloadURL(el);
+      return url;
+    })
+  );
+  room.imagesUrl = images;
   dispatch({ type: GET_ROOM_BY_ID, payload: room });
 };
 

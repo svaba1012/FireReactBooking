@@ -223,7 +223,6 @@ function RegisterForm(props) {
     fetchData();
   }, []);
 
-  console.log("lokacije" + props.locations);
   const getValidateText = (validNum) => {
     if (validNum === 0) {
       return;
@@ -237,7 +236,7 @@ function RegisterForm(props) {
 
   let [tabs, setTabs] = useState([
     { name: "Naziv i lokacija", count: 2, validTab: [0, 0] },
-    { name: "Pregled objekta", count: 3, validTab: [0, 1, 0] },
+    { name: "Pregled objekta", count: 3, validTab: [0, 0, 0] },
     { name: "Slike", count: 1, validTab: [0] },
     { name: "Cena", count: 1, validTab: [0] },
   ]);
@@ -259,18 +258,19 @@ function RegisterForm(props) {
         tabStates[0][0] = -1;
       }
     }
+    console.log(values.pics);
     if (values.pics) {
       if (values.pics.length < 3) {
         errors.pics = "*Minimalan broj slika je 3";
-        // setValidTab(-1, 2, 0);
+        if (submiting) tabStates[2][0] = -1;
       }
       if (values.pics.length > 10) {
         errors.pics = "*Maksimalan broj slika je 10";
-        // setValidTab(-1, 2, 0);
+        if (submiting) tabStates[2][0] = -1;
       }
     } else {
       errors.pics = "*Minimalan broj slika je 3";
-      // setValidTab(-1, 2, 0);
+      if (submiting) tabStates[2][0] = -1;
     }
 
     if (!values.numOfPeople || values.numOfPeople < 1) {

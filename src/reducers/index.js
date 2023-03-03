@@ -30,8 +30,13 @@ const roomReducer = (state = null, action) => {
     case GET_ROOM_BY_ID:
       return action.payload;
     case RESERVE_ROOM:
-      let newReservations = [...state.reservations].push(action.payload);
-      return { ...state, reservations: newReservations };
+      let newReservations = [...state.reservations];
+      newReservations.push(action.payload);
+
+      return {
+        ...state,
+        reservations: newReservations,
+      };
     default:
       return { ...state };
   }

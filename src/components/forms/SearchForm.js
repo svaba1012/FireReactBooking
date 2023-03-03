@@ -1,4 +1,5 @@
 import { Form, Field } from "react-final-form";
+import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { searchRooms } from "../../actions";
 import LocationInput from "./fields/LocationInput";
@@ -10,10 +11,26 @@ function SearchForm(props) {
     ? { display: "flex", justifyContent: "space-around" }
     : {};
 
+  let navigate = useNavigate();
+
   return (
     <Form
       onSubmit={(values) => {
-        props.searchRooms(values.location, { start: 20, end: 25 }, null);
+        // await props.searchRooms(
+        //   values.location,
+        //   {
+        //     start: values.period.startDate.getTime() / 1000,
+        //     end: values.period.endDate.getTime() / 1000,
+        //   },
+        //   values.numberOfPeople.old
+        // );
+        navigate(
+          `/search?location=${values.location}&startDate=${
+            values.period.startDate.getTime() / 1000
+          }&endDate=${values.period.endDate.getTime() / 1000}&filter=${
+            values.numberOfPeople.old
+          }`
+        );
       }}
       validate={props.validate}
       render={({ handleSubmit }) => (

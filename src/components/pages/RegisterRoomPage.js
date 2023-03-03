@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
 import Auth from "../Auth";
 import RegisterForm from "../forms/RegisterForm";

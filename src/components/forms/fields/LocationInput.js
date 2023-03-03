@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-final-form";
 import { connect } from "react-redux";
 import { searchLocations } from "../../../actions";
@@ -7,6 +7,7 @@ function LocationInputField(props) {
   const { change } = useForm();
   const input = useRef();
   const optionList = useRef();
+
   let timer = null;
   const onInputChange = (e) => {
     if (timer) {
@@ -65,7 +66,14 @@ function LocationInputField(props) {
               }}
             >
               {location.name}
-              <span className="badge bg-primary rounded-pill">14</span>
+              <span
+                className="badge bg-primary rounded-pill"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title={`Broj registrovanih smestaja u mestu ${location.name}`}
+              >
+                {location.numOfRooms}
+              </span>
             </li>
           );
         })}

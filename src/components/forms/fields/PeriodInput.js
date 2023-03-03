@@ -20,19 +20,24 @@ function PeriodInput(props) {
   const dateRef = useRef();
 
   function customDayContent(day) {
-    let text = "Rezervisi";
     if (props.disabledDates && dateInArray(day, props.disabledDates)) {
-      text = "Zauzeto";
+      return (
+        <div data-toggle="tooltip" data-placement="bottom" title="Zauzeto">
+          <span>{format(day, "d")}</span>
+        </div>
+      );
     }
     return (
-      <div data-toggle="tooltip" data-placement="bottom" title={text}>
+      <div>
         <span>{format(day, "d")}</span>
       </div>
     );
   }
   return (
     <div>
-      <label className="form-label">Datum</label>
+      <label className="form-label">
+        {props.label ? props.label : "Datum"}
+      </label>
 
       <div class="input-group flex-nowrap">
         <span class="input-group-text" id="addon-wrapping">
@@ -64,7 +69,8 @@ function PeriodInput(props) {
           months={2}
           ranges={state}
           disabledDates={props.disabledDates}
-          minDate={props.minDate}
+          minDate={new Date()}
+          maxDate={addDays(new Date(), 200)}
           dayContentRenderer={customDayContent}
           direction="horizontal"
         />

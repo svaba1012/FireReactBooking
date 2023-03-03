@@ -4,11 +4,19 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import RoomCard from "../RoomCard";
 import SearchForm from "../forms/SearchForm";
+import { useSearchParams } from "react-router-dom";
 
 function RoomsPage(props) {
+  let [queryParams] = useSearchParams();
+  let params = Object.fromEntries([...queryParams]);
   useEffect(() => {
-    props.searchRooms();
-  }, []);
+    console.log(params);
+    props.searchRooms(
+      params.location,
+      { start: params.startDate, end: params.endDate },
+      params.filter
+    );
+  });
 
   return (
     <div class="row align-items-start">

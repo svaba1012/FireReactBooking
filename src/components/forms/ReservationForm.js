@@ -29,7 +29,7 @@ function ReservationForm(props) {
             name="date"
             component={PeriodInput}
             disabledDates={disabledDates}
-            minDate={new Date()}
+            label="Izaberite slobodne datume da rezervisete smestaj"
           ></Field>
           <button className="btn btn-primary" style={{ marginTop: "20px" }}>
             <i class="bi bi-calendar-check-fill"></i> Rezervisi

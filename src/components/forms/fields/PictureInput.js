@@ -3,6 +3,18 @@ import { useForm } from "react-final-form";
 import { useState, useMemo } from "react";
 
 function PictureInput(props) {
+  function renderErrorMsg(fileNum) {
+    if (props.meta.submitFailed) {
+      if (fileNum < 3) {
+        return <div className="text-danger h4">*Minimalan broj slika je 3</div>;
+      } else if (fileNum > 10) {
+        return (
+          <div className="text-danger h4">*Maksimalan broj slika je 10</div>
+        );
+      }
+    }
+  }
+  console.log(props.meta);
   let [selectedFiles, setSelectedFiles] = useState([]);
   let { change } = useForm();
   // change("pics, selectedFiles");
@@ -32,7 +44,6 @@ function PictureInput(props) {
     borderRadius: 2,
     borderColor: "#eeeeee",
     borderStyle: "dashed",
-    // backgroundColor: "#fafafa",
     color: "#bdbdbd",
     outline: "none",
     transition: "border .24s ease-in-out",
@@ -49,6 +60,15 @@ function PictureInput(props) {
   const rejectStyle = {
     borderColor: "#ff1744",
   };
+
+  if (
+    props.meta.submitFailed &&
+    (selectedFiles.length < 3 || selectedFiles.length > 10)
+  ) {
+    baseStyle.borderColor = "#ff1744";
+    focusedStyle.borderColor = "#ff1744";
+    acceptStyle.borderColor = "#ff1744";
+  }
 
   const style = useMemo(
     () => ({
@@ -70,9 +90,10 @@ function PictureInput(props) {
     <section className="container">
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-        <p>Prevuci ili klikni za ubacivanje slika</p>
+        <p>Prevuci ili klikni za ubacivanje slika {props.meta.error}</p>
       </div>
       <aside>
+        {renderErrorMsg(selectedFiles.length)}
         <h4>Files</h4>
         <ul>{files}</ul>
         <div
