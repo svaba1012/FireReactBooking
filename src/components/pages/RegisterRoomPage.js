@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
 import Auth from "../Auth";
@@ -6,7 +6,17 @@ import RegisterForm from "../forms/RegisterForm";
 import "./RegisterRoomPage.css";
 
 function RegisterRoomPage() {
-  if (!auth.currentUser) {
+  let [user, setUser] = useState(auth.currentUser);
+  useEffect(() => {
+    let intervalId = setInterval(() => {
+      setUser(auth.currentUser);
+      if (auth.currentUser) {
+        clearInterval(intervalId);
+      }
+    }, 100);
+  }, []);
+
+  if (!user) {
     return (
       <div className="sign-in-alert">
         <div className="sign-in-alert-box">

@@ -1,9 +1,11 @@
+import MapLocationMarker from "../../MapLocationMarker";
 import MapSetLocation from "../../MapSetLocation";
 
 function mapInput(props) {
   return (
     <div>
-      <MapSetLocation id={props.id} />
+      <MapLocationMarker></MapLocationMarker>
+      {/* <MapSetLocation id={props.id} /> */}
     </div>
   );
 }

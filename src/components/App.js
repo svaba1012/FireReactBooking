@@ -7,11 +7,14 @@ import { auth } from "../config/firebase";
 import RoomsPage from "./pages/RoomsPage";
 import RoomPage from "./pages/RoomPage";
 import RegisterRoomPage from "./pages/RegisterRoomPage";
+import Modal from "react-modal";
+
+Modal.setAppElement("#root");
 
 function App() {
-  useEffect(() => {
-    console.log(auth);
-  });
+  // useEffect(() => {
+  //   console.log(auth);
+  // });
 
   return (
     <div className="bg-dark" data-bs-theme="dark">

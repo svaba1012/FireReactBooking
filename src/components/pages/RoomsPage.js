@@ -10,7 +10,6 @@ function RoomsPage(props) {
   let [queryParams] = useSearchParams();
   let params = Object.fromEntries([...queryParams]);
   useEffect(() => {
-    console.log(params);
     props.searchRooms(
       params.location,
       { start: params.startDate, end: params.endDate },
@@ -19,11 +18,11 @@ function RoomsPage(props) {
   });
 
   return (
-    <div class="row align-items-start">
-      <div class="col-3">
+    <div className="row align-items-start">
+      <div className="col-3">
         <SearchForm onSubmit={() => {}} validate={() => {}} />
       </div>
-      <div class="col-9">
+      <div className="col-9">
         <h2>Pronadjeno {props.rooms.length}</h2>
         {props.rooms.map((room, id) => (
           <Link

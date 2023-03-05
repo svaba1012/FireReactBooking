@@ -2,14 +2,13 @@ import React from "react";
 import "./RoomCard.css";
 
 function RoomCard({ room }) {
-  console.log(room);
   return (
     <div className="card mb-3">
       <div className="row g-0">
         <div className="col-md-4">
           <img
             src={room.mainPicUrl}
-            class="img-fluid rounded-start"
+            className="img-fluid rounded-start"
             alt="..."
             style={{ height: "100%", objectFit: "cover" }}
           />
@@ -18,24 +17,25 @@ function RoomCard({ room }) {
           <div className="card-body">
             <h2 className="card-title">{room.name}</h2>
             <p className="card-title">
-              {room.address}, {room.location} - 150m od centra
+              <i className="fa-solid fa-location-dot"></i> {room.address},{" "}
+              {room.location}
             </p>
-            <p className="cart-text">
+            <div className="cart-text">
               {" "}
               <div>Tip: {room.type}</div>
               <div> Maksimalan broj osoba: {room.numOfPeople} </div>
               <div>
                 Povrsina: {room.area} m<sup>2</sup>
               </div>
-            </p>
+            </div>
 
             <p className="card-text">
               This is a wider card with supporting text below as a natural
               lead-in to additional content. This content is a little bit
               longer.
             </p>
-            <div class="card-text">
-              <small class="text-muted">Last updated 3 mins ago</small>
+            <div className="card-text">
+              <small className="text-muted">Last updated 3 mins ago</small>
               <div className="score">
                 <div className="score-desc">
                   <div>Izvanredan</div> <div>88 recenzija</div>

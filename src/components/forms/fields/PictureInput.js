@@ -110,8 +110,8 @@ function PictureInput(props) {
       </div>
       <aside>
         {renderErrorMsg(selectedFiles.length)}
-        <h4>Files</h4>
-        <ul>{files}</ul>
+        {/* <h4>Files</h4>
+        <ul>{files}</ul> */}
         <div
           style={{
             display: "flex",

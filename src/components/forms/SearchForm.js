@@ -16,19 +16,11 @@ function SearchForm(props) {
   return (
     <Form
       onSubmit={(values) => {
-        // await props.searchRooms(
-        //   values.location,
-        //   {
-        //     start: values.period.startDate.getTime() / 1000,
-        //     end: values.period.endDate.getTime() / 1000,
-        //   },
-        //   values.numberOfPeople.old
-        // );
         navigate(
           `/search?location=${values.location}&startDate=${
             values.period.startDate.getTime() / 1000
           }&endDate=${values.period.endDate.getTime() / 1000}&filter=${
-            values.numberOfPeople.old
+            values.numberOfPeople
           }`
         );
       }}
@@ -47,7 +39,7 @@ function SearchForm(props) {
             className="btn btn-primary"
             style={{ marginTop: "10px", width: "100%" }}
           >
-            <i class="bi bi-search"></i> Trazi
+            <i className="bi bi-search"></i> Trazi
           </button>
         </form>
       )}

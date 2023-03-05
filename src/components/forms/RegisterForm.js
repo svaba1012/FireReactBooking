@@ -10,6 +10,7 @@ import selectInput from "./fields/selectInput";
 import mapInput from "./fields/mapInput";
 import PictureInput from "./fields/PictureInput";
 import textAreaInput from "./fields/textAreaInput";
+import MapLocationMarker from "../MapLocationMarker";
 
 function RegisterFormFirstTabFirst(props) {
   if (!props.locations) {
@@ -54,7 +55,7 @@ function RegisterFormFirstTabFirst(props) {
 function RegisterFormFirstTabSecond(props) {
   return (
     <div>
-      {/* <Field component={mapInput} name="cords" id={props.mapId} />; */}
+      <Field component={MapLocationMarker} name="cords" />
     </div>
   );
 }
@@ -245,6 +246,16 @@ function RegisterForm(props) {
     fetchData();
   }, []);
 
+  let [tabs, setTabs] = useState([
+    { name: "Naziv i lokacija", count: 2, validTab: [0, 0] },
+    { name: "Pregled objekta", count: 3, validTab: [0, 0, 0] },
+    { name: "Slike", count: 1, validTab: [0] },
+    { name: "Opis i cena", count: 2, validTab: [0, 0] },
+  ]);
+  if (!props.locations) {
+    return <div></div>;
+  }
+
   const getValidateText = (validNum) => {
     if (validNum === 0) {
       return;
@@ -255,14 +266,6 @@ function RegisterForm(props) {
       return <i class="bi bi-x-circle-fill" style={{ color: "red" }}></i>;
     }
   };
-
-  let [tabs, setTabs] = useState([
-    { name: "Naziv i lokacija", count: 2, validTab: [0, 0] },
-    { name: "Pregled objekta", count: 3, validTab: [0, 0, 0] },
-    { name: "Slike", count: 1, validTab: [0] },
-    { name: "Opis i cena", count: 2, validTab: [0, 0] },
-  ]);
-
   const setValidTab = (tabStates) => {
     setTabs(
       tabs.map((tab, id) => {
@@ -272,6 +275,7 @@ function RegisterForm(props) {
   };
 
   const validateInputs = (submiting, values) => {
+    console.log(values);
     let errors = {};
     let tabStates = [[1, 1], [1, 1, 1], [1], [1, 1]];
     if (!values.name || values.name.length < 10) {
@@ -348,6 +352,7 @@ function RegisterForm(props) {
     <Form
       onSubmit={(values) => {
         console.log(values);
+        values.cords = [values.cords.lat, values.cords.lng];
         props.insertRoom(values);
       }}
       validate={(values) => validateInputs(false, values)}

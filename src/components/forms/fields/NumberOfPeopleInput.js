@@ -1,22 +1,43 @@
 import { useState, useRef } from "react";
 import { useForm } from "react-final-form";
 
-function NumberOfPeopleInput() {
-  const { change } = useForm();
-  let [people, setPeople] = useState({ old: 2, young: 0 });
-  let optionListRef = useRef();
-  change("numberOfPeople", people);
+function NumberOfPeopleInput(props) {
+  // const { change } = useForm();
+  // let [people, setPeople] = useState({ old: 2, young: 0 });
+  // let optionListRef = useRef();
+  // change("numberOfPeople", people);
   return (
-    <div style={{ position: "relative" }}>
+    <div>
       <label className="form-label">Broj ljudi</label>
 
-      <div class="input-group flex-nowrap">
-        <span class="input-group-text" id="addon-wrapping">
-          <i class="bi bi-person-fill"></i>
+      <div className="input-group flex-nowrap">
+        <span className="input-group-text" id="addon-wrapping">
+          <i className="bi bi-person-fill"></i>
+        </span>
+        <input
+          type="number"
+          className="form-control"
+          aria-label="Broj ljudi"
+          min={0}
+          {...props.value}
+          aria-describedby="addon-wrapping"
+          placeholder="Broj ljudi"
+        />
+      </div>
+    </div>
+  );
+
+  {
+    /* <div style={{ position: "relative" }}>
+      <label className="form-label">Broj ljudi</label>
+
+      <div className="input-group flex-nowrap">
+        <span className="input-group-text" id="addon-wrapping">
+          <i className="bi bi-person-fill"></i>
         </span>
         <input
           type="text"
-          class="form-control"
+          className="form-control"
           aria-label="Broj ljudi"
           readOnly
           value={`Odrasli-${people.old} ; Deca-${people.young}`}
@@ -38,12 +59,12 @@ function NumberOfPeopleInput() {
             <input
               type="number"
               min={0}
-              class="form-control"
+              className="form-control"
               id="floatingInput"
               value={people.old}
               onChange={(e) => setPeople({ ...people, old: e.target.value })}
             />
-            <label for="floatingInput">Broj odraslih</label>
+            <label htmlFor="floatingInput">Broj odraslih</label>
           </div>
         </li>
         <li className="list-group-item d-flex justify-content-between align-items-center">
@@ -51,17 +72,17 @@ function NumberOfPeopleInput() {
             <input
               type="number"
               min={0}
-              class="form-control"
+              className="form-control"
               id="floatingInput1"
               value={people.yound}
               onChange={(e) => setPeople({ ...people, young: e.target.value })}
             />
-            <label for="floatingInput1">Broj dece</label>
+            <label htmlFor="floatingInput1">Broj dece</label>
           </div>
         </li>
       </ul>
-    </div>
-  );
+    </div> */
+  }
 }
 
 export default NumberOfPeopleInput;

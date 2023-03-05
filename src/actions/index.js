@@ -59,7 +59,6 @@ export const searchRooms =
     if (reservationRoomsIds.length === 0) {
       reservationRoomsIds.push("0");
     }
-    console.log(reservationRoomsIds);
     const roomsRef = collection(db, "rooms");
     const roomsQuery = query(
       roomsRef,
@@ -71,7 +70,6 @@ export const searchRooms =
     let rooms = roomsQuerySnapshot.docs.map((room) => {
       return { ...room.data(), id: room.id, location: location };
     });
-    console.log(rooms);
     rooms = await Promise.all(
       rooms.map(async (room) => {
         let imageRef = ref(storage, `${room.pics}/${room.mainPic}`);

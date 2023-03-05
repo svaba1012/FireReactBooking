@@ -1,43 +1,50 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getRoomById } from "../../actions";
 import ReservationForm from "../forms/ReservationForm";
 import ImageCarousel from "../ImageCarousel";
+import MapModal from "../modals/MapModal";
 
 const arrayChecks = {
-  klima: { icon: <i class="fa-solid fa-fan"></i>, text: "Klima" },
+  klima: { icon: <i className="fa-solid fa-fan"></i>, text: "Klima" },
   grejanje: {
-    icon: <i class="fa-solid fa-fire-flame-curved"></i>,
+    icon: <i className="fa-solid fa-fire-flame-curved"></i>,
     text: "Grejanje",
   },
   wifi: {
-    icon: <i class="bi bi-wifi"> </i>,
+    icon: <i className="bi bi-wifi"> </i>,
     text: "Wi-fi",
   },
   parking: {
     text: "Parking",
-    icon: <i class="bi bi-p-square-fill"></i>,
+    icon: <i className="bi bi-p-square-fill"></i>,
   },
 
-  kuhinja: { text: "Kuhinja", icon: <i class="fa-solid fa-kitchen-set"></i> },
+  kuhinja: {
+    text: "Kuhinja",
+    icon: <i className="fa-solid fa-kitchen-set"></i>,
+  },
   cajnaKuhinja: {
-    icon: <i class="bi bi-cup-hot-fill"></i>,
+    icon: <i className="bi bi-cup-hot-fill"></i>,
     text: "Cajna kuhinja",
   },
-  vesMasina: { icon: <i class="fa-solid fa-shirt"></i>, text: "Ves masina" },
-  tv: { text: "TV", icon: <i class="bi bi-tv-fill"></i> },
+  vesMasina: {
+    icon: <i className="fa-solid fa-shirt"></i>,
+    text: "Ves masina",
+  },
+  tv: { text: "TV", icon: <i className="bi bi-tv-fill"></i> },
   sauna: {
-    icon: <i class="fa-solid fa-hot-tub-person"></i>,
+    icon: <i className="fa-solid fa-hot-tub-person"></i>,
 
     text: "Sauna",
   },
   miniBar: {
-    icon: <i class="fa-solid fa-martini-glass-citrus"></i>,
+    icon: <i className="fa-solid fa-martini-glass-citrus"></i>,
     text: "Mini-bar",
   },
   djakuzi: {
-    icon: <i class="fa-solid fa-hot-tub-person"></i>,
+    icon: <i className="fa-solid fa-hot-tub-person"></i>,
     text: "Djakuzi",
   },
   terasa: { text: "Terasa" },
@@ -46,22 +53,28 @@ const arrayChecks = {
   nemacki: { text: "Nemacki" },
   srpski: { text: "Srpski" },
   pusenje: {
-    icon: <i class="fa-solid fa-smoking"></i>,
+    icon: <i className="fa-solid fa-smoking"></i>,
     text: "Dozvoljeno pusenje",
   },
   ljubimci: {
-    icon: <i class="fa-solid fa-dog"></i>,
+    icon: <i className="fa-solid fa-dog"></i>,
     text: " Dozvoljen boravak kucnih ljubimaca",
   },
   dogadjaji: {
-    icon: <i class="fa-solid fa-champagne-glasses"></i>,
+    icon: <i className="fa-solid fa-champagne-glasses"></i>,
     text: "Dozvoljene zurke/dogadjaji",
   },
-  numOfBracni: { icon: <i class="fa-solid fa-bed"></i>, text: "Bracni krevet" },
-  numOfObican: { icon: <i class="fa-solid fa-bed"></i>, text: "Obican krevet" },
-  numOfKauc: { icon: <i class="fa-solid fa-bed"></i>, text: "Kauc" },
+  numOfBracni: {
+    icon: <i className="fa-solid fa-bed"></i>,
+    text: "Bracni krevet",
+  },
+  numOfObican: {
+    icon: <i className="fa-solid fa-bed"></i>,
+    text: "Obican krevet",
+  },
+  numOfKauc: { icon: <i className="fa-solid fa-bed"></i>, text: "Kauc" },
   numOfBathrooms: {
-    icon: <i class="fa-solid fa-shower"></i>,
+    icon: <i className="fa-solid fa-shower"></i>,
     text: "Kupatila",
   },
 };
@@ -74,23 +87,24 @@ function RoomPage(props) {
   useEffect(() => {
     props.getRoomById(params.id);
   }, []);
+  let [isMapModalOpen, setIsMapModalOpen] = useState(false);
   if (!props.room.id) {
     return <div></div>;
   }
-  console.log(props.room);
 
   const getCards = (room) => {
     let keys = intersect(Object.keys(room), Object.keys(arrayChecks));
-    return keys.map((key) => {
+    return keys.map((key, id) => {
       return (
         <div
+          key={id}
           style={{
             display: "flex",
             margin: "5px",
           }}
         >
-          <div class="card">
-            <div class="card-body">
+          <div className="card">
+            <div className="card-body">
               <h3>
                 {arrayChecks[key].icon} {arrayChecks[key].text}{" "}
                 {typeof room[key] === "boolean" ? (
@@ -108,9 +122,20 @@ function RoomPage(props) {
 
   return (
     <div>
+      <MapModal
+        isOpen={isMapModalOpen}
+        setIsOpen={setIsMapModalOpen}
+        address={`${props.room.address}, ${props.room.location}`}
+        center={props.room.cords}
+      ></MapModal>
       <h2>{props.room.name}</h2>
-      <h5>
-        <i class="bi bi-geo-alt-fill"></i>
+      <h5
+        onClick={() => {
+          setIsMapModalOpen(true);
+        }}
+        style={{ cursor: "pointer" }}
+      >
+        <i className="bi bi-geo-alt-fill"></i>
         {props.room.address}, {props.room.location} - Prikazi mapu
       </h5>
       <ImageCarousel
@@ -133,10 +158,10 @@ function RoomPage(props) {
               margin: "5px",
             }}
           >
-            <div class="card">
-              <div class="card-body">
+            <div className="card">
+              <div className="card-body">
                 <h3>
-                  <i class="fa-solid fa-user"></i> Maksimalan broj gostiju:{" "}
+                  <i className="fa-solid fa-user"></i> Maksimalan broj gostiju:{" "}
                   {props.room.numOfPeople}
                 </h3>
               </div>
@@ -148,10 +173,10 @@ function RoomPage(props) {
               margin: "5px",
             }}
           >
-            <div class="card">
-              <div class="card-body">
+            <div className="card">
+              <div className="card-body">
                 <h3>
-                  <i class="fa-solid fa-house-chimney"></i> Povrsina:{" "}
+                  <i className="fa-solid fa-house-chimney"></i> Povrsina:{" "}
                   {props.room.area} m<sup>2</sup>
                 </h3>
               </div>
@@ -160,10 +185,7 @@ function RoomPage(props) {
           {getCards(props.room)}
         </div>
         <hr />
-        <p className="lead">
-          {props.room.description} asdkaslkdk lmaskld masklklask ldas daksldasdk
-          maskdlmasd
-        </p>
+        <p className="lead">{props.room.description}</p>
         <hr />
       </div>
       <ReservationForm room={props.room}></ReservationForm>

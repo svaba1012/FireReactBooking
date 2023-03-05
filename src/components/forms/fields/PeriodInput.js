@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-final-form";
 import { addDays, format } from "date-fns";
 import { DateRange, DateRangePicker } from "react-date-range";
@@ -15,7 +15,9 @@ function PeriodInput(props) {
       key: "selection",
     },
   ]);
-  change("period", state[0]);
+  useEffect(() => {
+    change("period", state[0]);
+  }, []);
 
   const dateRef = useRef();
 
@@ -39,15 +41,16 @@ function PeriodInput(props) {
         {props.label ? props.label : "Datum"}
       </label>
 
-      <div class="input-group flex-nowrap">
-        <span class="input-group-text" id="addon-wrapping">
-          <i class="bi bi-calendar-date-fill"></i>
+      <div className="input-group flex-nowrap">
+        <span className="input-group-text" id="addon-wrapping">
+          <i className="bi bi-calendar-date-fill"></i>
         </span>
         <input
           type="text"
-          class="form-control"
+          className="form-control"
           placeholder="Date"
           aria-label="Date"
+          readOnly
           value={
             (state[0].startDate + "").substring(0, 11) +
             "- " +
