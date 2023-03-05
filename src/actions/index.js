@@ -22,49 +22,6 @@ import {
 import { v4 } from "uuid";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 
-const MAX_FETCH_OBJ = 5;
-
-export const searchRooms1 =
-  (criteria = [], location = "Beograd") =>
-  async (dispatch) => {
-    const roomsRef = collection(db, "rooms");
-    if (location) {
-      const locationRef = collection(db, "locations");
-      const locQuery = query(locationRef, where("name", "==", location));
-      const locQuerySnapshot = await getDocs(locQuery);
-      console.log(locQuerySnapshot);
-      if (locQuerySnapshot.docs.length > 0) {
-        let locId = locQuerySnapshot.docs[0].id;
-        criteria.push(["locationId", "==", locId]);
-      }
-    } else {
-      criteria.push(["locationId", "!=", "0"]);
-    }
-    const q = query(
-      roomsRef,
-      ...criteria.map((el) => where(...el)),
-      limit(MAX_FETCH_OBJ)
-    );
-    const querySnapshot = await getDocs(q);
-    console.log(querySnapshot);
-    let rooms = querySnapshot.docs.map((el) => {
-      // console.log(el.data().location.id);
-      // const locationRef = collection(db, "locations", el.data().location.id);
-      // const locationData = await getDocs(locationRef);
-      // console.log(locationData);
-      console.log(el.data());
-      return {
-        ...el.data(),
-        // location: el.data().location.name,
-        id: el.id,
-      };
-    });
-    dispatch({
-      type: SEARCH_ROOMS,
-      payload: rooms,
-    });
-  };
-
 export const searchRooms =
   (location = null, date = null, criteria = null) =>
   async (dispatch) => {
@@ -112,9 +69,17 @@ export const searchRooms =
 
     const roomsQuerySnapshot = await getDocs(roomsQuery);
     let rooms = roomsQuerySnapshot.docs.map((room) => {
-      return { ...room.data(), id: room.id };
+      return { ...room.data(), id: room.id, location: location };
     });
     console.log(rooms);
+    rooms = await Promise.all(
+      rooms.map(async (room) => {
+        let imageRef = ref(storage, `${room.pics}/${room.mainPic}`);
+        let mainPicUrl = await getDownloadURL(imageRef);
+        return { ...room, mainPicUrl: mainPicUrl };
+      })
+    );
+
     dispatch({
       type: SEARCH_ROOMS,
       payload: rooms,
@@ -154,8 +119,12 @@ export const insertRoom = (room) => async (dispatch) => {
   let res;
   let picsFolder = `pics-${v4()}`;
   await Promise.all(
-    room.pics.map(async (pic) => {
-      const picRef = ref(storage, `${picsFolder}/pic-${v4()}`);
+    room.pics.map(async (pic, id) => {
+      let imageName = `pic-${v4()}`;
+      const picRef = ref(storage, `${picsFolder}/${imageName}`);
+      if (room.mainPicId === id) {
+        room.mainPic = imageName;
+      }
       try {
         await uploadBytes(picRef, pic);
       } catch (e) {
@@ -182,6 +151,17 @@ export const getRoomById = (id) => async (dispatch) => {
     return { ...el.data(), id: el.id };
   });
   room = room[0];
+  let locationRef = collection(db, "locations");
+  let locationQuery = query(
+    locationRef,
+    where("__name__", "==", room.locationId)
+  );
+  res = await getDocs(locationQuery);
+  let locations = res.docs.map((el) => {
+    return { ...el.data(), id: el.id };
+  });
+  room.location = locations[0].name;
+
   let reservationRef = collection(db, "reservations");
   let reservationQuery = query(reservationRef, where("roomId", "==", id));
   res = await getDocs(reservationQuery);

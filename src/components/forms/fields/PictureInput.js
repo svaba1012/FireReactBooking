@@ -2,6 +2,22 @@ import { useDropzone } from "react-dropzone";
 import { useForm } from "react-final-form";
 import { useState, useMemo } from "react";
 
+function renderMainPicDiv() {
+  return (
+    <div
+      style={{
+        backgroundColor: "blue",
+        borderBottomRightRadius: "10px",
+        padding: "5px",
+        position: "absolute",
+        zIndex: 10,
+      }}
+    >
+      Glavna slika
+    </div>
+  );
+}
+
 function PictureInput(props) {
   function renderErrorMsg(fileNum) {
     if (props.meta.submitFailed) {
@@ -16,8 +32,8 @@ function PictureInput(props) {
   }
   console.log(props.meta);
   let [selectedFiles, setSelectedFiles] = useState([]);
+  let [selectedImage, setSelectedImage] = useState(0);
   let { change } = useForm();
-  // change("pics, selectedFiles");
   const dropZone = useDropzone({
     accept: { "image/png": [".png"] },
     onDropAccepted: async (acceptedFiles) => {
@@ -106,6 +122,10 @@ function PictureInput(props) {
         >
           {selectedFiles.map((file, id) => {
             let imgUrl = URL.createObjectURL(file);
+            let imageBorder = "1px solid #ddd";
+            if (id === selectedImage) {
+              imageBorder = "3px solid blue";
+            }
             return (
               <div
                 style={{
@@ -113,41 +133,63 @@ function PictureInput(props) {
                   position: "relative",
                   marginRight: "20px",
                   marginBottom: "20px",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  setSelectedImage(id);
+                  change("mainPicId", id);
                 }}
               >
-                <img
-                  src={imgUrl}
-                  style={{
-                    width: "40vh",
-                    height: "40vh",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    padding: "5px",
-                    objectFit: "cover",
-                  }}
-                  key={id}
-                  alt="Slika"
-                ></img>
-                <div
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "5px",
-                    zIndex: 3,
-                  }}
-                  onClick={(e) => {
-                    URL.revokeObjectURL(file.preview);
-                    setSelectedFiles(selectedFiles.filter((el, i) => i !== id));
-                  }}
-                >
-                  <i
-                    class="bi bi-x-circle-fill"
+                {id === selectedImage ? renderMainPicDiv() : ""}
+                <div style={{ position: "relative" }}>
+                  <img
+                    src={imgUrl}
                     style={{
-                      color: "red",
-                      fontSize: "xx-large",
-                      cursor: "pointer",
+                      width: "40vh",
+                      height: "40vh",
+                      border: imageBorder,
+                      borderRadius: "4px",
+                      padding: "5px",
+                      objectFit: "cover",
                     }}
-                  ></i>
+                    key={id}
+                    alt="Slika"
+                  ></img>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "5px",
+                      zIndex: 3,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      URL.revokeObjectURL(file.preview);
+                      change(
+                        "pics",
+                        selectedFiles.filter((el, i) => i !== id)
+                      );
+                      setSelectedFiles(
+                        selectedFiles.filter((el, i) => i !== id)
+                      );
+                      if (id < selectedImage) {
+                        change("mainPicId", selectedImage - 1);
+                        setSelectedImage(selectedImage - 1);
+                      } else if (id === selectedImage) {
+                        change("mainPicId", 0);
+                        setSelectedImage(0);
+                      }
+                    }}
+                  >
+                    <i
+                      class="bi bi-x-circle-fill"
+                      style={{
+                        color: "red",
+                        fontSize: "xx-large",
+                        cursor: "pointer",
+                      }}
+                    ></i>
+                  </div>
                 </div>
               </div>
             );

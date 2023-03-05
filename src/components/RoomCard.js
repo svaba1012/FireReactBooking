@@ -7,14 +7,27 @@ function RoomCard({ room }) {
     <div className="card mb-3">
       <div className="row g-0">
         <div className="col-md-4">
-          <img src="..." class="img-fluid rounded-start" alt="..." />
+          <img
+            src={room.mainPicUrl}
+            class="img-fluid rounded-start"
+            alt="..."
+            style={{ height: "100%", objectFit: "cover" }}
+          />
         </div>
         <div className="col-md-8">
           <div className="card-body">
             <h2 className="card-title">{room.name}</h2>
-            <p className="card-title">{room.location}</p>
-            <p className="cart-title"> 150m od centra </p>
-            <p className="cart-title"> Tip: Apartman klasika </p>
+            <p className="card-title">
+              {room.address}, {room.location} - 150m od centra
+            </p>
+            <p className="cart-text">
+              {" "}
+              <div>Tip: {room.type}</div>
+              <div> Maksimalan broj osoba: {room.numOfPeople} </div>
+              <div>
+                Povrsina: {room.area} m<sup>2</sup>
+              </div>
+            </p>
 
             <p className="card-text">
               This is a wider card with supporting text below as a natural

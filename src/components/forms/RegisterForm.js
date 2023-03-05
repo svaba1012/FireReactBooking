@@ -9,6 +9,7 @@ import checkInput from "./fields/checkInput";
 import selectInput from "./fields/selectInput";
 import mapInput from "./fields/mapInput";
 import PictureInput from "./fields/PictureInput";
+import textAreaInput from "./fields/textAreaInput";
 
 function RegisterFormFirstTabFirst(props) {
   if (!props.locations) {
@@ -27,6 +28,7 @@ function RegisterFormFirstTabFirst(props) {
         component={selectInput}
         name="type"
         options={["Apartman", "Hotel", "Kuca", "Motel"]}
+        selectValues={["Apartman", "Hotel", "Kuca", "Motel"]}
         label="Tip Smestaja"
         initText="Izaberite tip smestaja"
       />
@@ -35,9 +37,16 @@ function RegisterFormFirstTabFirst(props) {
         name="locationId"
         options={props.locations.map((el) => el.name)}
         selectValues={props.locations.map((el) => el.id)}
-        label="Drzava"
+        label="Mesto"
         initText="Izaberite drzavu"
       />
+      <Field
+        component={classicInput}
+        name="address"
+        id="addres"
+        inputType="text"
+        label="Adresa smestaja"
+      ></Field>
     </div>
   );
 }
@@ -200,7 +209,20 @@ function RegisterFormThirdTab(props) {
   );
 }
 
-function RegisterFormForthTab(props) {
+function RegisterFormForthTabFirst(props) {
+  return (
+    <div>
+      <Field
+        name="description"
+        component={textAreaInput}
+        id="description"
+        label="Opis smestaja"
+      ></Field>
+    </div>
+  );
+}
+
+function RegisterFormForthTabSecond(props) {
   return (
     <div>
       <Field
@@ -238,7 +260,7 @@ function RegisterForm(props) {
     { name: "Naziv i lokacija", count: 2, validTab: [0, 0] },
     { name: "Pregled objekta", count: 3, validTab: [0, 0, 0] },
     { name: "Slike", count: 1, validTab: [0] },
-    { name: "Cena", count: 1, validTab: [0] },
+    { name: "Opis i cena", count: 2, validTab: [0, 0] },
   ]);
 
   const setValidTab = (tabStates) => {
@@ -251,9 +273,15 @@ function RegisterForm(props) {
 
   const validateInputs = (submiting, values) => {
     let errors = {};
-    let tabStates = [[1, 1], [1, 1, 1], [1], [1]];
+    let tabStates = [[1, 1], [1, 1, 1], [1], [1, 1]];
     if (!values.name || values.name.length < 10) {
       errors.name = "*Naziv smestaja mora biti duzine bar 10 slova";
+      if (submiting) {
+        tabStates[0][0] = -1;
+      }
+    }
+    if (!values.address || values.name.address < 10) {
+      errors.address = "*Adresa smestaja mora biti duzine bar 10 slova";
       if (submiting) {
         tabStates[0][0] = -1;
       }
@@ -302,7 +330,13 @@ function RegisterForm(props) {
 
     if (!values.pricePerNight || values.pricePerNight < 0) {
       errors.pricePerNight = "*Unesite cenu koja nije negativan broj";
-      if (submiting) tabStates[3][0] = -1;
+      if (submiting) tabStates[3][1] = -1;
+    }
+    if (!values.description || values.description.length < 100) {
+      errors.description = "*Opis smestaja mora biti duzine bar 100 slova";
+      if (submiting) {
+        tabStates[3][0] = -1;
+      }
     }
     if (submiting) {
       setValidTab(tabStates);
@@ -332,7 +366,8 @@ function RegisterForm(props) {
               <RegisterFormSecondTabSecond />
               <RegisterFormSecondTabThird />
               <RegisterFormThirdTab />
-              <RegisterFormForthTab />
+              <RegisterFormForthTabFirst />
+              <RegisterFormForthTabSecond />
             </TabedCarousel>
             <div>
               <button

@@ -26,7 +26,7 @@ function ImageCarousel(props) {
         style={{
           overflowX: "hidden",
           height: "100px",
-          bottom: "-200px",
+          bottom: "-150px",
           justifyContent: "normal",
         }}
       >
@@ -65,7 +65,7 @@ function ImageCarousel(props) {
           return (
             <div className={styleClass}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <img src={image} alt="Slika" />
+                <img src={image} alt="Slika" style={{ maxHeight: "60vh" }} />
               </div>
             </div>
           );
