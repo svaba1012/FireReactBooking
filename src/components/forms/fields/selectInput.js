@@ -1,7 +1,7 @@
 function selectInput(props) {
   return (
     <div key={props.key}>
-      <label for={props.name} className="form-label">
+      <label htmlFor={props.name} className="form-label">
         {props.label}
       </label>
       <select

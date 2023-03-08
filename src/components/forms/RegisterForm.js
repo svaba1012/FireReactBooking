@@ -3,7 +3,7 @@ import { Field } from "react-final-form";
 import { Form } from "react-final-form";
 import TabedCarousel from "../TabedCarousel";
 import { connect } from "react-redux";
-import { insertRoom, getLocations } from "../../actions";
+import { insertRoom, getLocations, setStage } from "../../actions";
 import classicInput from "./fields/classicInput";
 import checkInput from "./fields/checkInput";
 import selectInput from "./fields/selectInput";
@@ -11,6 +11,7 @@ import mapInput from "./fields/mapInput";
 import PictureInput from "./fields/PictureInput";
 import textAreaInput from "./fields/textAreaInput";
 import MapLocationMarker from "../MapLocationMarker";
+import { useNavigate } from "react-router-dom";
 
 function RegisterFormFirstTabFirst(props) {
   if (!props.locations) {
@@ -142,6 +143,7 @@ function RegisterFormSecondTabSecond(props) {
         {el.checks.map((check, id) => (
           <div key={`${superId}-${id}`}>
             <Field
+              type="checkbox"
               name={data[superId][id]}
               id={`check${superId}-${id}`}
               component={checkInput}
@@ -239,6 +241,7 @@ function RegisterFormForthTabSecond(props) {
 }
 
 function RegisterForm(props) {
+  let navigate = useNavigate();
   useEffect(() => {
     async function fetchData() {
       await props.getLocations();
@@ -252,7 +255,7 @@ function RegisterForm(props) {
     { name: "Slike", count: 1, validTab: [0] },
     { name: "Opis i cena", count: 2, validTab: [0, 0] },
   ]);
-  if (!props.locations) {
+  if (!props.locations || props.locations.length === 0) {
     return <div></div>;
   }
 
@@ -261,9 +264,11 @@ function RegisterForm(props) {
       return;
     }
     if (validNum === 1) {
-      return <i class="bi bi-check-circle-fill" style={{ color: "green" }}></i>;
+      return (
+        <i className="bi bi-check-circle-fill" style={{ color: "green" }}></i>
+      );
     } else {
-      return <i class="bi bi-x-circle-fill" style={{ color: "red" }}></i>;
+      return <i className="bi bi-x-circle-fill" style={{ color: "red" }}></i>;
     }
   };
   const setValidTab = (tabStates) => {
@@ -275,7 +280,6 @@ function RegisterForm(props) {
   };
 
   const validateInputs = (submiting, values) => {
-    console.log(values);
     let errors = {};
     let tabStates = [[1, 1], [1, 1, 1], [1], [1, 1]];
     if (!values.name || values.name.length < 10) {
@@ -290,7 +294,6 @@ function RegisterForm(props) {
         tabStates[0][0] = -1;
       }
     }
-    console.log(values.pics);
     if (values.pics) {
       if (values.pics.length < 3) {
         errors.pics = "*Minimalan broj slika je 3";
@@ -353,7 +356,15 @@ function RegisterForm(props) {
       onSubmit={(values) => {
         console.log(values);
         values.cords = [values.cords.lat, values.cords.lng];
-        props.insertRoom(values);
+        props.insertRoom(values, navigate);
+      }}
+      initialValues={{
+        type: "Apartman",
+        locationId: props.locations[0].id,
+        prijavaOd: 15,
+        prijavaDo: 16,
+        odjavaOd: 11,
+        odjavaDo: 12,
       }}
       validate={(values) => validateInputs(false, values)}
       render={({ handleSubmit, values }) => {
@@ -377,7 +388,10 @@ function RegisterForm(props) {
             <div>
               <button
                 className="btn btn-primary"
-                onClick={() => validateInputs(true, values)}
+                onClick={() => {
+                  validateInputs(true, values);
+                  // props.setStage(true);
+                }}
               >
                 Registruj
               </button>
@@ -393,4 +407,6 @@ const mapState = (state) => {
   return { locations: state.locations };
 };
 
-export default connect(mapState, { insertRoom, getLocations })(RegisterForm);
+export default connect(mapState, { insertRoom, getLocations, setStage })(
+  RegisterForm
+);

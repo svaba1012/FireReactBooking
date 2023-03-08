@@ -8,7 +8,7 @@ function checkInput(props) {
         id={props.id}
         {...props.input}
       />
-      <label className="form-check-label" for={props.id}>
+      <label className="form-check-label" htmlFor={props.id}>
         {props.label}
       </label>
     </div>

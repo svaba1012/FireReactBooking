@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase";
+import { connect } from "react-redux";
+import { setStage } from "../../actions";
 import Auth from "../Auth";
 import RegisterForm from "../forms/RegisterForm";
+import SpinerWithProgress from "../SpinerWithProgress";
 import "./RegisterRoomPage.css";
+import LoadingModal from "../modals/LoadingModal";
 
-function RegisterRoomPage() {
+function RegisterRoomPage(props) {
   let [user, setUser] = useState(auth.currentUser);
   useEffect(() => {
     let intervalId = setInterval(() => {
@@ -30,11 +34,18 @@ function RegisterRoomPage() {
       </div>
     );
   }
+
   return (
     <div>
+      <LoadingModal isOpen={props.stage.loading}></LoadingModal>
       <RegisterForm />
+      {/* <SpinerWithProgress></SpinerWithProgress> */}
     </div>
   );
 }
 
-export default RegisterRoomPage;
+const propsMap = (state) => {
+  return { stage: state.stage };
+};
+
+export default connect(propsMap, { setStage })(RegisterRoomPage);

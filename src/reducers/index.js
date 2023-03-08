@@ -5,6 +5,7 @@ import {
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
   SEARCH_ROOMS,
+  SET_STAGE,
 } from "../actions/types";
 
 const searchRoomsReducer = (state = [], action) => {
@@ -51,11 +52,27 @@ const locationReducer = (state = [], action) => {
   }
 };
 
+const stageReducer = (
+  state = {
+    loading: false,
+    data: { min: 0, max: 100, progress: 60, text: "Hajde" },
+  },
+  action
+) => {
+  switch (action.type) {
+    case SET_STAGE:
+      return action.payload;
+    default:
+      return { ...state };
+  }
+};
+
 const reducers = combineReducers({
   searchedRooms: searchRoomsReducer,
   searchedLocations: searchLocationReducer,
   room: roomReducer,
   locations: locationReducer,
+  stage: stageReducer,
 });
 
 export default reducers;

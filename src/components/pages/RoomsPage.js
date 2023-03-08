@@ -5,9 +5,11 @@ import { Link } from "react-router-dom";
 import RoomCard from "../RoomCard";
 import SearchForm from "../forms/SearchForm";
 import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function RoomsPage(props) {
   let [queryParams] = useSearchParams();
+  let navigate = useNavigate();
   let params = Object.fromEntries([...queryParams]);
   useEffect(() => {
     props.searchRooms(
@@ -15,7 +17,7 @@ function RoomsPage(props) {
       { start: params.startDate, end: params.endDate },
       params.filter
     );
-  });
+  }, []);
 
   return (
     <div className="row align-items-start">
@@ -25,13 +27,15 @@ function RoomsPage(props) {
       <div className="col-9">
         <h2>Pronadjeno {props.rooms.length}</h2>
         {props.rooms.map((room, id) => (
-          <Link
+          <div onClick={() => navigate(`/room/${room.id}`)} key={id}>
+            {/* <Link
             key={id}
             to={`/room/${room.id}`}
             style={{ textDecoration: "inherit", color: "inherit" }}
-          >
+          > */}
             <RoomCard room={room} />
-          </Link>
+            {/* </Link> */}
+          </div>
         ))}
       </div>
     </div>

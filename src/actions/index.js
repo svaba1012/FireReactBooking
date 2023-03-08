@@ -18,6 +18,7 @@ import {
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
   SEARCH_ROOMS,
+  SET_STAGE,
 } from "./types";
 import { v4 } from "uuid";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
@@ -112,10 +113,11 @@ export const searchLocations = (searchStr) => async (dispatch) => {
   dispatch({ type: SEARCH_LOCATIONS, payload: locations });
 };
 
-export const insertRoom = (room) => async (dispatch) => {
+export const insertRoom = (room, navigate) => async (dispatch) => {
   const roomRef = collection(db, "rooms");
   let res;
   let picsFolder = `pics-${v4()}`;
+  let numOfSentPics = 0;
   await Promise.all(
     room.pics.map(async (pic, id) => {
       let imageName = `pic-${v4()}`;
@@ -123,22 +125,75 @@ export const insertRoom = (room) => async (dispatch) => {
       if (room.mainPicId === id) {
         room.mainPic = imageName;
       }
+
       try {
         await uploadBytes(picRef, pic);
+        numOfSentPics++;
+        dispatch({
+          type: SET_STAGE,
+          payload: {
+            loading: true,
+            phase: true,
+            data: {
+              min: 0,
+              max: room.pics.length,
+              progress: numOfSentPics,
+              text: `Slanje slika(${numOfSentPics} od ${room.pics.length})`,
+            },
+          },
+        });
       } catch (e) {
         console.error(e);
       }
     })
   );
   room.pics = picsFolder;
+  dispatch({
+    type: SET_STAGE,
+    payload: {
+      loading: true,
+      phase: true,
+      data: {
+        min: 0,
+        max: 100,
+        progress: 98,
+        text: `Slanje ostalih podataka`,
+      },
+    },
+  });
+
   try {
     res = await addDoc(roomRef, room);
+    console.log(res);
+    dispatch({ type: INSERT_ROOM, payload: res });
+    dispatch({
+      type: SET_STAGE,
+      payload: {
+        loading: true,
+        phase: true,
+        data: {
+          min: 0,
+          max: 100,
+          progress: 100,
+          text: `Uspesno ste registrovali smestaj`,
+        },
+      },
+    });
+    setTimeout(() => {
+      dispatch({
+        type: SET_STAGE,
+        payload: {
+          loading: false,
+          phase: true,
+          data: null,
+        },
+      });
+      navigate(`/room/${res.id}`);
+    }, 3000);
   } catch (e) {
     console.error(e);
     res = e;
   }
-  console.log("ENDE");
-  dispatch({ type: INSERT_ROOM, payload: res });
 };
 
 export const getRoomById = (id) => async (dispatch) => {
@@ -202,3 +257,14 @@ export const reserveRoom = (room, dates) => async (dispatch, getState) => {
   await addDoc(reservationRef, reservation);
   dispatch({ type: RESERVE_ROOM, payload: reservation });
 };
+
+export const setStage =
+  (
+    loading,
+    phase = 0,
+    data = { min: 0, max: 100, progress: 60, text: "Hajde" }
+  ) =>
+  async (dispatch) => {
+    dispatch({ type: SET_STAGE, payload: { loading, phase, data } });
+    // return { type: SET_STAGE, payload: { id, data } };
+  };

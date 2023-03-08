@@ -30,7 +30,6 @@ function PictureInput(props) {
       }
     }
   }
-  console.log(props.meta);
   let [selectedFiles, setSelectedFiles] = useState([]);
   let [selectedImage, setSelectedImage] = useState(0);
   let { change } = useForm();
@@ -128,6 +127,7 @@ function PictureInput(props) {
             }
             return (
               <div
+                key={id}
                 style={{
                   width: "40vh",
                   position: "relative",
@@ -182,7 +182,7 @@ function PictureInput(props) {
                     }}
                   >
                     <i
-                      class="bi bi-x-circle-fill"
+                      className="bi bi-x-circle-fill"
                       style={{
                         color: "red",
                         fontSize: "xx-large",

@@ -33,7 +33,7 @@ function classicInput(props) {
 
   return (
     <div className="mb-3">
-      <label for={props.id}>{props.label}</label>
+      <label htmlFor={props.id}>{props.label}</label>
       {inputJsx}
     </div>
   );

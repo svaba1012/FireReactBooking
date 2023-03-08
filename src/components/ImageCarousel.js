@@ -1,7 +1,12 @@
 import React, { useRef, useState } from "react";
+import PictureModal from "./modals/PictureModal";
+
+let timeOutId = null;
 
 function ImageCarousel(props) {
   let [selectedImage, setSelectedImage] = useState(0);
+  let [isPicModalOpen, setIsPicModalOpen] = useState(false);
+  let [imgUrl, setImgUrl] = useState(null);
   let indicatorsRef = useRef();
   const changeActiveImage = (id) => {
     setSelectedImage(id);
@@ -19,9 +24,14 @@ function ImageCarousel(props) {
   };
 
   return (
-    <div id={props.id} class="carousel slide">
+    <div id={props.id} className="carousel slide">
+      <PictureModal
+        isOpen={isPicModalOpen}
+        setIsOpen={setIsPicModalOpen}
+        imgUrl={imgUrl}
+      ></PictureModal>
       <div
-        class="carousel-indicators"
+        className="carousel-indicators"
         ref={indicatorsRef}
         style={{
           overflowX: "hidden",
@@ -42,6 +52,7 @@ function ImageCarousel(props) {
 
           return (
             <button
+              key={el}
               type="button"
               data-bs-target={`#${props.id}`}
               data-bs-slide-to={el}
@@ -56,52 +67,70 @@ function ImageCarousel(props) {
           );
         })}
       </div>
-      <div class="carousel-inner">
+      <div className="carousel-inner">
         {props.images.map((image, id) => {
           let styleClass = "carousel-item ";
           if (id === 0) {
             styleClass += "active";
           }
           return (
-            <div className={styleClass}>
+            <div className={styleClass} key={id}>
               <div style={{ display: "flex", justifyContent: "center" }}>
-                <img src={image} alt="Slika" style={{ maxHeight: "60vh" }} />
+                <img
+                  src={image}
+                  alt="Slika"
+                  style={{ maxHeight: "60vh", cursor: "pointer" }}
+                  onClick={() => {
+                    setImgUrl(image);
+                    setIsPicModalOpen(true);
+                  }}
+                />
               </div>
             </div>
           );
         })}
       </div>
       <button
-        class="carousel-control-prev"
+        className="carousel-control-prev"
         type="button"
         data-bs-target={`#${props.id}`}
         data-bs-slide="prev"
         onClick={() => {
-          if (selectedImage === 0) {
-            changeActiveImage(props.images.length - 1);
-          } else {
-            changeActiveImage(selectedImage - 1);
+          if (!timeOutId) {
+            timeOutId = setTimeout(() => {
+              if (selectedImage === 0) {
+                changeActiveImage(props.images.length - 1);
+              } else {
+                changeActiveImage(selectedImage - 1);
+              }
+              timeOutId = null;
+            }, 600);
           }
         }}
       >
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
+        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Previous</span>
       </button>
       <button
-        class="carousel-control-next"
+        className="carousel-control-next"
         type="button"
         data-bs-target={`#${props.id}`}
         data-bs-slide="next"
         onClick={() => {
-          if (selectedImage === props.images.length - 1) {
-            changeActiveImage(0);
-          } else {
-            changeActiveImage(selectedImage + 1);
+          if (!timeOutId) {
+            timeOutId = setTimeout(() => {
+              if (selectedImage === props.images.length - 1) {
+                changeActiveImage(0);
+              } else {
+                changeActiveImage(selectedImage + 1);
+              }
+              timeOutId = null;
+            }, 600);
           }
         }}
       >
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
+        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Next</span>
       </button>
     </div>
   );

@@ -78,7 +78,7 @@ function MapLocationMarker() {
         }}
       >
         <i
-          class="fa-solid fa-location-dot"
+          className="fa-solid fa-location-dot"
           style={{ color: "blue", fontSize: "6vh" }}
         ></i>
       </div>
