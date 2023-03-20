@@ -22,6 +22,22 @@ const getRoomIcons = (room) => {
   });
 };
 
+const getRatingText = (rating) => {
+  if (rating >= 4.5) {
+    return "Izvanredan";
+  } else if (rating >= 4) {
+    return "Odlican";
+  } else if (rating >= 3) {
+    return "Vrlo dobar";
+  } else if (rating >= 2) {
+    return "Dobar";
+  } else if (rating >= 1) {
+    return "Dovoljan";
+  } else {
+    return "Los";
+  }
+};
+
 function RoomCard({ room }) {
   let [icons, setIcons] = useState(null);
   let [filter, setFilter] = useState(null);
@@ -35,7 +51,7 @@ function RoomCard({ room }) {
   }
 
   return (
-    <div className="card mb-3">
+    <div className="card mb-3" style={{ cursor: "pointer" }}>
       <div className="row g-0">
         <div className="col-md-4">
           <img
@@ -89,12 +105,17 @@ function RoomCard({ room }) {
             </p> */}
             <div className="card-text">
               {/* <small className="text-muted">Last updated 3 mins ago</small> */}
-              <div className="score bg-dark">
-                <div className="score-desc">
-                  <div>Izvanredan</div> <div>88 recenzija</div>
+              {room.reviews.rating ? (
+                <div className="score bg-dark">
+                  <div className="score-desc">
+                    <div>{getRatingText(room.reviews.rating)}</div>{" "}
+                    <div>{room.reviews.count} recenzija</div>
+                  </div>
+                  <div className="score-num">{room.reviews.rating}</div>
                 </div>
-                <div className="score-num">10.0</div>
-              </div>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </div>

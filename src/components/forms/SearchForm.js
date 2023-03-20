@@ -8,7 +8,7 @@ import NumberOfPeopleInput from "./fields/NumberOfPeopleInput";
 
 function SearchForm(props) {
   let formStyle = props.flex
-    ? { display: "flex", justifyContent: "space-around" }
+    ? { display: "flex", justifyContent: "space-around", padding: "10px" }
     : {};
 
   let navigate = useNavigate();
@@ -27,7 +27,7 @@ function SearchForm(props) {
       validate={props.validate}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
-          <h2>Pretrazi</h2>
+          {/* <h2>Pretrazi</h2> */}
           <div style={formStyle}>
             <Field name="location" component={LocationInput} />
             <Field name="period" component={PeriodInput} />

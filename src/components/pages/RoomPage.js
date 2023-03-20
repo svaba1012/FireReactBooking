@@ -6,6 +6,10 @@ import ReservationForm from "../forms/ReservationForm";
 import ImageCarousel from "../ImageCarousel";
 import MapModal from "../modals/MapModal";
 import { getRoomKeys, arrayChecks } from "../../utils/roomCheckData";
+import Star from "react-star-review";
+import EvaluationForm from "../forms/EvaluationForm";
+import { auth } from "../../config/firebase";
+import RoomReviews from "../RoomReviews";
 
 function RoomPage(props) {
   let params = useParams();
@@ -45,6 +49,21 @@ function RoomPage(props) {
     });
   };
 
+  let rating =
+    props.room.reviews.reduce((acc, rev) => {
+      return (
+        acc +
+        (rev.evalLocation +
+          rev.evalStuff +
+          rev.evalClean +
+          rev.evalThings +
+          rev.evalPrice +
+          rev.evalComfor) /
+          6
+      );
+    }, 0) / props.room.reviews.length;
+  rating = Math.round(rating * 100) / 100;
+
   return (
     <div>
       <MapModal
@@ -53,16 +72,24 @@ function RoomPage(props) {
         address={`${props.room.address}, ${props.room.location}`}
         center={props.room.cords}
       ></MapModal>
-      <h2>{props.room.name}</h2>
-      <h5
-        onClick={() => {
-          setIsMapModalOpen(true);
-        }}
-        style={{ cursor: "pointer" }}
-      >
-        <i className="bi bi-geo-alt-fill"></i>
-        {props.room.address}, {props.room.location} - Prikazi mapu
-      </h5>
+      <div style={{ position: "relative" }}>
+        <div
+          title={`Ocena: ${rating}`}
+          style={{ position: "absolute", top: "20px", right: "10px" }}
+        >
+          <Star rating={rating} />
+        </div>
+        <h2>{props.room.name}</h2>
+        <h5
+          onClick={() => {
+            setIsMapModalOpen(true);
+          }}
+          style={{ cursor: "pointer" }}
+        >
+          <i className="bi bi-geo-alt-fill"></i>
+          {props.room.address}, {props.room.location} - Prikazi mapu
+        </h5>
+      </div>
       <ImageCarousel
         id="imageSlide"
         images={props.room.imagesUrl}
@@ -109,9 +136,20 @@ function RoomPage(props) {
           </div>
           {getCards(props.room)}
         </div>
+
         <hr />
         <p className="lead">{props.room.description}</p>
         <hr />
+        <RoomReviews reviews={props.room.reviews} />
+        <hr />
+        {auth.currentUser ? (
+          <div>
+            <EvaluationForm />
+            <hr />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <ReservationForm room={props.room}></ReservationForm>
     </div>

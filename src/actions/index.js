@@ -10,10 +10,11 @@ import {
   startAt,
   where,
 } from "firebase/firestore";
-import { db, storage } from "../config/firebase";
+import { auth, db, getUserData, storage } from "../config/firebase";
 import {
   GET_LOCATIONS,
   GET_ROOM_BY_ID,
+  INSERT_REVIEW,
   INSERT_ROOM,
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
@@ -22,6 +23,7 @@ import {
 } from "./types";
 import { v4 } from "uuid";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 export const searchRooms =
   (location = null, date = null, criteria = null) =>
@@ -71,11 +73,40 @@ export const searchRooms =
     let rooms = roomsQuerySnapshot.docs.map((room) => {
       return { ...room.data(), id: room.id, location: location };
     });
+    let reviewRef = collection(db, "reviews");
     rooms = await Promise.all(
       rooms.map(async (room) => {
         let imageRef = ref(storage, `${room.pics}/${room.mainPic}`);
         let mainPicUrl = await getDownloadURL(imageRef);
-        return { ...room, mainPicUrl: mainPicUrl };
+        let reviewQuery = query(reviewRef, where("roomId", "==", room.id));
+        let res = await getDocs(reviewQuery);
+        let reviews = res.docs.map((el) => {
+          return { ...el.data(), id: el.id };
+        });
+        let revLen = reviews.length;
+        let rating = null;
+        if (revLen > 0) {
+          rating =
+            reviews.reduce((acc, rev) => {
+              return (
+                acc +
+                (rev.evalLocation +
+                  rev.evalStuff +
+                  rev.evalClean +
+                  rev.evalThings +
+                  rev.evalPrice +
+                  rev.evalComfor) /
+                  6
+              );
+            }, 0) / revLen;
+          rating = Math.round(rating * 100) / 100;
+        }
+
+        return {
+          ...room,
+          mainPicUrl: mainPicUrl,
+          reviews: { count: revLen, rating: rating },
+        };
       })
     );
 
@@ -222,6 +253,15 @@ export const getRoomById = (id) => async (dispatch) => {
     return { ...el.data(), id: el.id };
   });
   room.reservations = reservations;
+  let reviewRef = collection(db, "reviews");
+  let reviewQuery = query(reviewRef, where("roomId", "==", id));
+  res = await getDocs(reviewQuery);
+  let reviews = res.docs.map((el) => {
+    return { ...el.data(), id: el.id };
+  });
+  // console.log(reviews);
+  room.reviews = reviews;
+
   let imagesRef = ref(storage, room.pics + "/");
   let response = await listAll(imagesRef);
   let images = await Promise.all(
@@ -268,3 +308,22 @@ export const setStage =
     dispatch({ type: SET_STAGE, payload: { loading, phase, data } });
     // return { type: SET_STAGE, payload: { id, data } };
   };
+
+export const insertReview = (review, userId) => async (dispatch, getState) => {
+  let reviewRef = collection(db, "reviews");
+  let time = new Date();
+  time = time.getTime() / 1000;
+  let dbReview = {
+    ...review,
+    roomId: getState().room.id,
+    user: {
+      name: auth.currentUser.displayName,
+      pic: auth.currentUser.photoURL,
+    },
+    userId: userId,
+    date: time,
+  };
+
+  await addDoc(reviewRef, dbReview);
+  dispatch({ type: INSERT_REVIEW, payload: dbReview });
+};

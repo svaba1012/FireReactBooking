@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
 function TabedCarousel(props) {
+  let [activeTab, setActiveTab] = useState(0);
   let slideId = 0;
   return (
     <div
@@ -56,6 +57,7 @@ function TabedCarousel(props) {
                 width: `${100 / props.tabs.length / tab.count}%`,
                 textIndent: "0px",
               }}
+              onClick={() => setActiveTab(slideId)}
             >
               {props.getTabText(tab.validTab[el])}
             </button>
@@ -84,7 +86,13 @@ function TabedCarousel(props) {
           type="button"
           data-bs-target={`#${props.id}`}
           data-bs-slide="prev"
-          style={{ position: "relative", border: "2px solid black" }}
+          disabled={activeTab === 0}
+          style={{
+            position: "relative",
+            border: "2px solid black",
+            // opacity: activeTab === 0 ? "none" : "block",
+          }}
+          onClick={() => setActiveTab(activeTab - 1)}
         >
           <span
             className="carousel-control-prev-icon"
@@ -103,6 +111,7 @@ function TabedCarousel(props) {
             padding: "5px 100px",
             marginLeft: "10px",
           }}
+          onClick={() => setActiveTab(activeTab + 1)}
         >
           Nastavi
         </button>
