@@ -6,3 +6,4 @@ export const INSERT_ROOM = "INSERT_ROOM";
 export const RESERVE_ROOM = "RESERVE_ROOM";
 export const SET_STAGE = "SET_STAGE";
 export const INSERT_REVIEW = "INSERT_REVIEW";
+export const GET_PLACE_CORDS = "GET_PLACE_CORDS";

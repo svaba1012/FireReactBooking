@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import {
   GET_LOCATIONS,
+  GET_PLACE_CORDS,
   GET_ROOM_BY_ID,
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
@@ -67,12 +68,22 @@ const stageReducer = (
   }
 };
 
+const mapCenterReducer = (state = null, action) => {
+  switch (action.type) {
+    case GET_PLACE_CORDS:
+      return action.payload;
+    default:
+      return { ...state };
+  }
+};
+
 const reducers = combineReducers({
   searchedRooms: searchRoomsReducer,
   searchedLocations: searchLocationReducer,
   room: roomReducer,
   locations: locationReducer,
   stage: stageReducer,
+  mapCenter: mapCenterReducer,
 });
 
 export default reducers;

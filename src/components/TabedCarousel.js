@@ -1,5 +1,15 @@
 import React, { useState } from "react";
 
+function getTabCountBefore(tabs, tabId) {
+  return tabs.reduce((acc, el, id) => {
+    if (id < tabId) {
+      return acc + el.count;
+    } else {
+      return acc;
+    }
+  }, 0);
+}
+
 function TabedCarousel(props) {
   let [activeTab, setActiveTab] = useState(0);
   let slideId = 0;
@@ -57,7 +67,10 @@ function TabedCarousel(props) {
                 width: `${100 / props.tabs.length / tab.count}%`,
                 textIndent: "0px",
               }}
-              onClick={() => setActiveTab(slideId)}
+              onClick={() => {
+                setActiveTab(getTabCountBefore(props.tabs, id) + el);
+                props.onTabChanged(getTabCountBefore(props.tabs, id) + el);
+              }}
             >
               {props.getTabText(tab.validTab[el])}
             </button>
@@ -92,7 +105,10 @@ function TabedCarousel(props) {
             border: "2px solid black",
             // opacity: activeTab === 0 ? "none" : "block",
           }}
-          onClick={() => setActiveTab(activeTab - 1)}
+          onClick={() => {
+            setActiveTab(activeTab - 1);
+            props.onTabChanged(activeTab - 1);
+          }}
         >
           <span
             className="carousel-control-prev-icon"
@@ -111,7 +127,10 @@ function TabedCarousel(props) {
             padding: "5px 100px",
             marginLeft: "10px",
           }}
-          onClick={() => setActiveTab(activeTab + 1)}
+          onClick={() => {
+            setActiveTab((activeTab + 1) % props.children.length);
+            props.onTabChanged((activeTab + 1) % props.children.length);
+          }}
         >
           Nastavi
         </button>

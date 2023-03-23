@@ -3,7 +3,12 @@ import { Field } from "react-final-form";
 import { Form } from "react-final-form";
 import TabedCarousel from "../TabedCarousel";
 import { connect } from "react-redux";
-import { insertRoom, getLocations, setStage } from "../../actions";
+import {
+  insertRoom,
+  getLocations,
+  setStage,
+  getPlaceCords,
+} from "../../actions";
 import classicInput from "./fields/classicInput";
 import checkInput from "./fields/checkInput";
 import selectInput from "./fields/selectInput";
@@ -54,9 +59,17 @@ function RegisterFormFirstTabFirst(props) {
 }
 
 function RegisterFormFirstTabSecond(props) {
+  if (!props.mapCenter) {
+    return <div></div>;
+  }
+
   return (
     <div>
-      <Field component={MapLocationMarker} name="cords" />
+      <Field
+        component={MapLocationMarker}
+        name="cords"
+        center={[props.mapCenter.lat, props.mapCenter.lon]}
+      />
     </div>
   );
 }
@@ -288,7 +301,7 @@ function RegisterForm(props) {
         tabStates[0][0] = -1;
       }
     }
-    if (!values.address || values.name.address < 10) {
+    if (!values.address || values.address.length < 10) {
       errors.address = "*Adresa smestaja mora biti duzine bar 10 slova";
       if (submiting) {
         tabStates[0][0] = -1;
@@ -374,9 +387,19 @@ function RegisterForm(props) {
               tabs={tabs}
               id="register-form-carousel"
               getTabText={getValidateText}
+              onTabChanged={(id) => {
+                console.log(id);
+                if (id === 1) {
+                  props.getPlaceCords(values.address);
+                  console.log(values.address);
+                }
+              }}
             >
               <RegisterFormFirstTabFirst locations={props.locations} />
-              <RegisterFormFirstTabSecond mapId="map" />
+              <RegisterFormFirstTabSecond
+                mapId="map"
+                mapCenter={props.mapCenter}
+              />
 
               <RegisterFormSecondTabFirst />
               <RegisterFormSecondTabSecond />
@@ -404,9 +427,12 @@ function RegisterForm(props) {
 }
 
 const mapState = (state) => {
-  return { locations: state.locations };
+  return { locations: state.locations, mapCenter: state.mapCenter };
 };
 
-export default connect(mapState, { insertRoom, getLocations, setStage })(
-  RegisterForm
-);
+export default connect(mapState, {
+  insertRoom,
+  getLocations,
+  setStage,
+  getPlaceCords,
+})(RegisterForm);

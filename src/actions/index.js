@@ -13,6 +13,7 @@ import {
 import { auth, db, getUserData, storage } from "../config/firebase";
 import {
   GET_LOCATIONS,
+  GET_PLACE_CORDS,
   GET_ROOM_BY_ID,
   INSERT_REVIEW,
   INSERT_ROOM,
@@ -24,6 +25,7 @@ import {
 import { v4 } from "uuid";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 import { getAuth } from "firebase/auth";
+import geoapify from "../api/geoapify";
 
 export const searchRooms =
   (location = null, date = null, criteria = null) =>
@@ -326,4 +328,12 @@ export const insertReview = (review, userId) => async (dispatch, getState) => {
 
   await addDoc(reviewRef, dbReview);
   dispatch({ type: INSERT_REVIEW, payload: dbReview });
+};
+
+export const getPlaceCords = (address) => async (dispatch, getState) => {
+  let res = await geoapify.get("/geocode/search", {
+    params: { text: address, type: "street" },
+  });
+
+  dispatch({ type: GET_PLACE_CORDS, payload: res.data.features[0].properties });
 };

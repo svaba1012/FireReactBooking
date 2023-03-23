@@ -5,7 +5,6 @@ import SpinerWithProgress from "../SpinerWithProgress";
 import { customStyles } from "./modalStyles";
 
 function LoadingModal({ isOpen, stage }) {
-  console.log(stage.data);
   customStyles.content = {
     ...customStyles.content,
   };
