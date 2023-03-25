@@ -68,8 +68,11 @@ function TabedCarousel(props) {
                 textIndent: "0px",
               }}
               onClick={() => {
+                props.onTabChanged(
+                  activeTab,
+                  getTabCountBefore(props.tabs, id) + el
+                );
                 setActiveTab(getTabCountBefore(props.tabs, id) + el);
-                props.onTabChanged(getTabCountBefore(props.tabs, id) + el);
               }}
             >
               {props.getTabText(tab.validTab[el])}
@@ -106,8 +109,8 @@ function TabedCarousel(props) {
             // opacity: activeTab === 0 ? "none" : "block",
           }}
           onClick={() => {
+            props.onTabChanged(activeTab, activeTab - 1);
             setActiveTab(activeTab - 1);
-            props.onTabChanged(activeTab - 1);
           }}
         >
           <span
@@ -128,8 +131,11 @@ function TabedCarousel(props) {
             marginLeft: "10px",
           }}
           onClick={() => {
+            props.onTabChanged(
+              activeTab,
+              (activeTab + 1) % props.children.length
+            );
             setActiveTab((activeTab + 1) % props.children.length);
-            props.onTabChanged((activeTab + 1) % props.children.length);
           }}
         >
           Nastavi

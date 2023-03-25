@@ -65,8 +65,7 @@ function RoomCard({ room }) {
           <div className="card-body">
             <h2 className="card-title">{room.name}</h2>
             <p className="card-title">
-              <i className="fa-solid fa-location-dot"></i> {room.address},{" "}
-              {room.location}
+              <i className="fa-solid fa-location-dot"></i> {room.address}
             </p>
             <div className="cart-text">
               {" "}

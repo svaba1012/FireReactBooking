@@ -9,7 +9,14 @@ function Header() {
       data-bs-theme="dark"
     >
       <div className="container-fluid">
-        <Link to="/">FireReactBooking</Link>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <h3>
+            <i className="fa-brands fa-react fa-spin text-primary"></i>
+            <span className="text-warning">Fire</span>
+            <span className="text-primary">React</span>
+            <span className="text-warning">Booking</span>
+          </h3>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -23,7 +30,7 @@ function Header() {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <a className="nav-link active" aria-current="page" href="#">
                 Home
               </a>
@@ -66,11 +73,17 @@ function Header() {
             </li>
             <li className="nav-item">
               <a className="nav-link disabled">Disabled</a>
-            </li>
+            </li> */}
           </ul>
         </div>
-        <div className="nav-item " style={{ justifyContent: "right" }}>
-          <Link to="/register-room">Registruj smestaj</Link>
+        <div
+          className="nav-item "
+          style={{ justifyContent: "right", marginRight: "10px" }}
+        >
+          <Link to="/register-room" style={{ textDecoration: "none" }}>
+            {" "}
+            <h5 className="text-primary">Registruj smestaj</h5>
+          </Link>
         </div>
         <div className="nav-item " style={{ justifyContent: "right" }}>
           <Auth />

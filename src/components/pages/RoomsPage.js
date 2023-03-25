@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { searchRooms } from "../../actions";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import RoomCard from "../RoomCard";
 import SearchForm from "../forms/SearchForm";
 import { useSearchParams } from "react-router-dom";
@@ -13,7 +12,7 @@ function RoomsPage(props) {
   let params = Object.fromEntries([...queryParams]);
   useEffect(() => {
     props.searchRooms(
-      params.location,
+      { lat: params.lat, lon: params.lon },
       { start: params.startDate, end: params.endDate },
       params.filter
     );

@@ -10,7 +10,7 @@ import {
   startAt,
   where,
 } from "firebase/firestore";
-import { auth, db, getUserData, storage } from "../config/firebase";
+import { auth, db, storage } from "../config/firebase";
 import {
   GET_LOCATIONS,
   GET_PLACE_CORDS,
@@ -24,7 +24,6 @@ import {
 } from "./types";
 import { v4 } from "uuid";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
-import { getAuth } from "firebase/auth";
 import geoapify from "../api/geoapify";
 
 export const searchRooms =
@@ -34,13 +33,21 @@ export const searchRooms =
     if (!location) {
       return;
     }
+
     let locId;
+    let res = await geoapify.get("/geocode/reverse", {
+      params: { type: "city", lat: location.lat, lon: location.lon },
+    });
+    let city = res.data.features[0].properties;
+    console.log(city);
+
     const locationRef = collection(db, "locations");
-    const locQuery = query(locationRef, where("name", "==", location));
+    const locQuery = query(locationRef, where("name", "==", city.city));
     const locQuerySnapshot = await getDocs(locQuery);
     if (locQuerySnapshot.docs.length > 0) {
       locId = locQuerySnapshot.docs[0].id;
     }
+
     const reservationRef = collection(db, "reservations");
     const reservationQuery = query(
       reservationRef,
@@ -195,7 +202,28 @@ export const insertRoom = (room, navigate) => async (dispatch) => {
     },
   });
 
+  // ?lat=44.79620443688944&lon=20.48810262451343&type=city&lang=sr&format=json&apiKey=YOUR_API_KEY"
+
   try {
+    res = await geoapify.get("/geocode/reverse", {
+      params: { type: "city", lat: room.cords[0], lon: room.cords[1] },
+    });
+
+    let city = res.data.features[0].properties;
+    console.log(city);
+    let locationRef = collection(db, "locations");
+    let locationQuery = query(locationRef, where("name", "==", city.city));
+    let locSnapshot = await getDocs(locationQuery);
+    let locations = locSnapshot.docs.map((loc) => {
+      return { ...loc.data(), id: loc.id };
+    });
+    if (locations.length === 0) {
+      res = await addDoc(locationRef, { name: city.city });
+      room.locationId = res.id;
+    } else {
+      room.locationId = locations[0].id;
+    }
+
     res = await addDoc(roomRef, room);
     console.log(res);
     dispatch({ type: INSERT_ROOM, payload: res });
@@ -334,6 +362,6 @@ export const getPlaceCords = (address) => async (dispatch, getState) => {
   let res = await geoapify.get("/geocode/search", {
     params: { text: address, type: "street" },
   });
-
+  // console.log(res.data.features[0].properties);
   dispatch({ type: GET_PLACE_CORDS, payload: res.data.features[0].properties });
 };

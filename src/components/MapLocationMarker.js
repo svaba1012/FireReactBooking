@@ -2,37 +2,10 @@ import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapLocationMarker.css";
-import { Marker } from "react-leaflet";
 import { useForm } from "react-final-form";
 import { useSelector } from "react-redux";
 const center = [51.505, -0.09];
 const zoom = 13;
-
-function DisplayPosition({ map }) {
-  const [position, setPosition] = useState(() => map.getCenter());
-
-  const onClick = useCallback(() => {
-    map.setView(center, zoom);
-  }, [map]);
-
-  const onMove = useCallback(() => {
-    setPosition(map.getCenter());
-  }, [map]);
-
-  useEffect(() => {
-    map.on("move", onMove);
-    return () => {
-      map.off("move", onMove);
-    };
-  }, [map, onMove]);
-
-  return (
-    <p>
-      latitude: {position.lat.toFixed(4)}, longitude: {position.lng.toFixed(4)}{" "}
-      <button onClick={onClick}>reset</button>
-    </p>
-  );
-}
 
 function MapLocationMarker(props) {
   const [map, setMap] = useState(null);
@@ -42,7 +15,10 @@ function MapLocationMarker(props) {
     change("cords", map.getCenter());
   }, [map]);
 
-  const centerSelector = useSelector((state) => state.mapCenter);
+  const centerSelector = useSelector(
+    (state) => state.mapCenter,
+    (oldVal, newVal) => oldVal.formatted === newVal.formatted
+  );
 
   useEffect(() => {
     if (map) {

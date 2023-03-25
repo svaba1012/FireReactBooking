@@ -12,16 +12,12 @@ import {
 import classicInput from "./fields/classicInput";
 import checkInput from "./fields/checkInput";
 import selectInput from "./fields/selectInput";
-import mapInput from "./fields/mapInput";
 import PictureInput from "./fields/PictureInput";
 import textAreaInput from "./fields/textAreaInput";
 import MapLocationMarker from "../MapLocationMarker";
 import { useNavigate } from "react-router-dom";
 
 function RegisterFormFirstTabFirst(props) {
-  if (!props.locations) {
-    return;
-  }
   return (
     <div>
       <Field
@@ -39,14 +35,14 @@ function RegisterFormFirstTabFirst(props) {
         label="Tip Smestaja"
         initText="Izaberite tip smestaja"
       />
-      <Field
+      {/* <Field
         component={selectInput}
         name="locationId"
         options={props.locations.map((el) => el.name)}
         selectValues={props.locations.map((el) => el.id)}
         label="Mesto"
         initText="Izaberite drzavu"
-      />
+      /> */}
       <Field
         component={classicInput}
         name="address"
@@ -255,12 +251,6 @@ function RegisterFormForthTabSecond(props) {
 
 function RegisterForm(props) {
   let navigate = useNavigate();
-  useEffect(() => {
-    async function fetchData() {
-      await props.getLocations();
-    }
-    fetchData();
-  }, []);
 
   let [tabs, setTabs] = useState([
     { name: "Naziv i lokacija", count: 2, validTab: [0, 0] },
@@ -268,9 +258,6 @@ function RegisterForm(props) {
     { name: "Slike", count: 1, validTab: [0] },
     { name: "Opis i cena", count: 2, validTab: [0, 0] },
   ]);
-  if (!props.locations || props.locations.length === 0) {
-    return <div></div>;
-  }
 
   const getValidateText = (validNum) => {
     if (validNum === 0) {
@@ -373,7 +360,6 @@ function RegisterForm(props) {
       }}
       initialValues={{
         type: "Apartman",
-        locationId: props.locations[0].id,
         prijavaOd: 15,
         prijavaDo: 16,
         odjavaOd: 11,
@@ -387,11 +373,9 @@ function RegisterForm(props) {
               tabs={tabs}
               id="register-form-carousel"
               getTabText={getValidateText}
-              onTabChanged={(id) => {
-                console.log(id);
-                if (id === 1) {
+              onTabChanged={(prevId, id) => {
+                if (prevId === 0 && id === 1) {
                   props.getPlaceCords(values.address);
-                  console.log(values.address);
                 }
               }}
             >
@@ -427,12 +411,11 @@ function RegisterForm(props) {
 }
 
 const mapState = (state) => {
-  return { locations: state.locations, mapCenter: state.mapCenter };
+  return { mapCenter: state.mapCenter };
 };
 
 export default connect(mapState, {
   insertRoom,
-  getLocations,
   setStage,
   getPlaceCords,
 })(RegisterForm);
