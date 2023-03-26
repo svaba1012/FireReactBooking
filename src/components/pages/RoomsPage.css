@@ -1,0 +1,16 @@
+.mobile-form {
+  display: none;
+}
+
+.pc-form {
+  display: block;
+}
+
+@media only screen and (max-width: 990px) {
+  .mobile-form {
+    display: block;
+  }
+  .pc-form {
+    display: none;
+  }
+}

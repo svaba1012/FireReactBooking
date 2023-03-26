@@ -31,22 +31,36 @@ function TabedCarousel(props) {
         {props.tabs.map((tab, id) => (
           <div
             style={{
-              textAlign: "center",
+              position: "relative",
+
               width: `${100 / props.tabs.length}%`,
+              height: "80px",
+              marginBottom: "0px",
             }}
             key={id}
           >
-            <h3>{tab.name}</h3>
+            <div
+              style={{
+                position: "absolute",
+                bottom: "0px",
+
+                width: "100%",
+                textAlign: "center",
+              }}
+            >
+              <h3>{tab.name}</h3>
+            </div>
           </div>
         ))}
       </div>
       <div
         className="carousel-indicators"
         style={{
-          top: "30px",
-          bottom: "inherit",
+          // top: "30px",
+          // bottom: "inherit",
           marginLeft: "0px",
           marginRight: "0px",
+          position: "relative",
         }}
       >
         {props.tabs.map((tab, id) => {
@@ -66,6 +80,7 @@ function TabedCarousel(props) {
               style={{
                 width: `${100 / props.tabs.length / tab.count}%`,
                 textIndent: "0px",
+                borderTopWidth: "2px",
               }}
               onClick={() => {
                 props.onTabChanged(

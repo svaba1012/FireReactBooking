@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-final-form";
 import { addDays, format } from "date-fns";
-import { DateRange, DateRangePicker } from "react-date-range";
+import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 
@@ -69,7 +69,7 @@ function PeriodInput(props) {
           onChange={(item) => setState([item.selection])}
           showSelectionPreview={true}
           moveRangeOnFirstSelection={false}
-          months={2}
+          months={window.innerWidth > 1050 ? 2 : 1}
           ranges={state}
           disabledDates={props.disabledDates}
           minDate={new Date()}

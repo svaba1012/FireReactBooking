@@ -129,12 +129,15 @@ function PictureInput(props) {
               <div
                 key={id}
                 style={{
-                  width: "40vh",
+                  // width: "40vh",
                   position: "relative",
-                  marginRight: "20px",
-                  marginBottom: "20px",
+                  // marginRight: "20px",
+                  // marginBottom: "20px",
+
+                  padding: "10px",
                   cursor: "pointer",
                 }}
+                className="col-12 col-sm-6 col-md-4"
                 onClick={() => {
                   setSelectedImage(id);
                   change("mainPicId", id);
@@ -145,12 +148,13 @@ function PictureInput(props) {
                   <img
                     src={imgUrl}
                     style={{
-                      width: "40vh",
-                      height: "40vh",
+                      width: "100%",
+                      // height: "40vh",
                       border: imageBorder,
                       borderRadius: "4px",
                       padding: "5px",
                       objectFit: "cover",
+                      aspectRatio: "1 / 1",
                     }}
                     key={id}
                     alt="Slika"

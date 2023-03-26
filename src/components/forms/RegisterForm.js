@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Field } from "react-final-form";
 import { Form } from "react-final-form";
 import TabedCarousel from "../TabedCarousel";
 import { connect } from "react-redux";
-import {
-  insertRoom,
-  getLocations,
-  setStage,
-  getPlaceCords,
-} from "../../actions";
+import { insertRoom, setStage, getPlaceCords } from "../../actions";
 import classicInput from "./fields/classicInput";
 import checkInput from "./fields/checkInput";
 import selectInput from "./fields/selectInput";
@@ -19,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 function RegisterFormFirstTabFirst(props) {
   return (
-    <div>
+    <div className="col-lg-4 col-md-6 col-12">
       <Field
         component={classicInput}
         name="name"
@@ -35,14 +30,6 @@ function RegisterFormFirstTabFirst(props) {
         label="Tip Smestaja"
         initText="Izaberite tip smestaja"
       />
-      {/* <Field
-        component={selectInput}
-        name="locationId"
-        options={props.locations.map((el) => el.name)}
-        selectValues={props.locations.map((el) => el.id)}
-        label="Mesto"
-        initText="Izaberite drzavu"
-      /> */}
       <Field
         component={classicInput}
         name="address"
@@ -73,36 +60,56 @@ function RegisterFormFirstTabSecond(props) {
 function RegisterFormSecondTabFirst(props) {
   let data = [
     { name: "numOfPeople", label: "Broj gostiju", min: 1 },
-    { name: "numOfBracni", label: "Bracni", min: 0 },
-    { name: "numOfObican", label: "Obican", min: 0 },
-    { name: "numOfKauc", label: "Kauc", min: 0 },
+    {
+      label: "Broj kreveta",
+      arr: [
+        { name: "numOfBracni", label: "Bracni", min: 0 },
+        { name: "numOfObican", label: "Obican", min: 0 },
+        { name: "numOfKauc", label: "Kauc", min: 0 },
+      ],
+    },
     { name: "numOfBathrooms", label: "Broj kupatila", min: 0 },
     { name: "area", label: "Povrsina (m2)", min: 0 },
   ];
 
   return (
-    <div style={{ width: "30vw" }}>
+    <div className="row">
       {data.map((el, id) => {
-        let header = "";
-        let footer = "";
         if (id === 1) {
-          header = <h5>Broj kreveta</h5>;
+          return (
+            <div>
+              <h5>{el.label}</h5>
+              <div className="row">
+                {el.arr.map((element, id1) => (
+                  <div key={id1} className="col-12 col-md-4">
+                    <Field
+                      component={classicInput}
+                      name={element.name}
+                      label={element.label}
+                      inputType="number"
+                      id={element.name}
+                      min={element.min}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
         }
-        if (id !== 1 && id !== 2) {
-          footer = <hr />;
-        }
+
         return (
-          <div key={id}>
-            {header}
-            <Field
-              component={classicInput}
-              name={el.name}
-              label={el.label}
-              inputType="number"
-              id={el.name}
-              min={el.min}
-            />
-            {footer}
+          <div>
+            {id === 2 ? <hr /> : ""}
+            <div key={id} className={id === 0 ? "col-6 col-md-4" : "col-6"}>
+              <Field
+                component={classicInput}
+                name={el.name}
+                label={el.label}
+                inputType="number"
+                id={el.name}
+                min={el.min}
+              />
+            </div>
           </div>
         );
       })}
@@ -136,34 +143,42 @@ function RegisterFormSecondTabSecond(props) {
     },
   ];
 
-  return arrayChecks.map((el, superId) => {
-    let data = [
-      ["klima", "grejanje", "wifi", "parking"],
-      ["kuhinja", "cajnaKuhinja", "vesMasina"],
-      ["tv", "sauna", "miniBar", "djakuzi"],
-      ["terasa", "dvoriste"],
-      ["engleski", "nemacki", "srpski"],
-      ["pusenje", "ljubimci", "dogadjaji"],
-    ];
+  return (
+    <div className="row">
+      {" "}
+      {arrayChecks.map((el, superId) => {
+        let data = [
+          ["klima", "grejanje", "wifi", "parking"],
+          ["kuhinja", "cajnaKuhinja", "vesMasina"],
+          ["tv", "sauna", "miniBar", "djakuzi"],
+          ["terasa", "dvoriste"],
+          ["engleski", "nemacki", "srpski"],
+          ["pusenje", "ljubimci", "dogadjaji"],
+        ];
 
-    return (
-      <div key={superId}>
-        <h5>{el.label}</h5>
-        {el.checks.map((check, id) => (
-          <div key={`${superId}-${id}`}>
-            <Field
-              type="checkbox"
-              name={data[superId][id]}
-              id={`check${superId}-${id}`}
-              component={checkInput}
-              label={check}
-            />
+        return (
+          <div
+            key={superId}
+            style={{ padding: "20px", borderBottom: "solid 2px grey" }}
+            className="col-12 col-md-6 col-lg-4"
+          >
+            <h5>{el.label}</h5>
+            {el.checks.map((check, id) => (
+              <div key={`${superId}-${id}`}>
+                <Field
+                  type="checkbox"
+                  name={data[superId][id]}
+                  id={`check${superId}-${id}`}
+                  component={checkInput}
+                  label={check}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-        <hr />
-      </div>
-    );
-  });
+        );
+      })}
+    </div>
+  );
 }
 
 function RegisterFormSecondTabThird(props) {
@@ -172,42 +187,50 @@ function RegisterFormSecondTabThird(props) {
   return (
     <div>
       <h5>Prijavljivanje</h5>
-      <div style={{ display: "flex" }} key={1}>
-        <Field
-          component={selectInput}
-          name="prijavaOd"
-          options={options}
-          label="Od"
-          initText="Izaberite vreme"
-          key={1}
-        />
-        <Field
-          component={selectInput}
-          name="prijavaDo"
-          options={options}
-          label="Do"
-          initText="Izaberite vreme"
-          key={2}
-        />
+      <div className="d-flex" key={1}>
+        <div style={{ marginRight: "20px" }}>
+          <Field
+            component={selectInput}
+            name="prijavaOd"
+            options={options}
+            label="Od"
+            initText="Izaberite vreme"
+            key={1}
+          />
+        </div>
+        <div>
+          <Field
+            component={selectInput}
+            name="prijavaDo"
+            options={options}
+            label="Do"
+            initText="Izaberite vreme"
+            key={2}
+          />
+        </div>
       </div>
       <h5>Odjavljivanje</h5>
-      <div style={{ display: "flex" }} key={2}>
-        <Field
-          component={selectInput}
-          name="odjavaOd"
-          options={options}
-          label="Od"
-          initText="Izaberite vreme"
-          key={1}
-        />
-        <Field
-          component={selectInput}
-          name="odjavaDo"
-          options={options}
-          label="Od"
-          initText="Izaberite vreme"
-          key={2}
-        />
+      <div className="d-flex" key={2}>
+        <div style={{ marginRight: "20px" }}>
+          <Field
+            component={selectInput}
+            name="odjavaOd"
+            options={options}
+            label="Od"
+            initText="Izaberite vreme"
+            key={1}
+          />
+        </div>
+        <div>
+          <Field
+            component={selectInput}
+            name="odjavaDo"
+            options={options}
+            label="Do"
+            initText="Izaberite vreme"
+            key={2}
+          />
+        </div>
       </div>
     </div>
   );
