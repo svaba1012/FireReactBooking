@@ -11,6 +11,8 @@ import EvaluationForm from "../forms/EvaluationForm";
 import { auth } from "../../config/firebase";
 import RoomReviews from "../RoomReviews";
 
+import "./RoomPage.css";
+
 function RoomPage(props) {
   let params = useParams();
   useEffect(() => {
@@ -73,12 +75,6 @@ function RoomPage(props) {
         center={props.room.cords}
       ></MapModal>
       <div style={{ position: "relative" }}>
-        <div
-          title={`Ocena: ${rating}`}
-          style={{ position: "absolute", top: "20px", right: "10px" }}
-        >
-          <Star rating={rating} />
-        </div>
         <h2>{props.room.name}</h2>
         <h5
           onClick={() => {
@@ -89,6 +85,9 @@ function RoomPage(props) {
           <i className="bi bi-geo-alt-fill"></i>
           {props.room.address}, {props.room.location} - Prikazi mapu
         </h5>
+        <div title={`Ocena: ${rating}`} className="rating-box">
+          <Star rating={rating} />
+        </div>
       </div>
       <ImageCarousel
         id="imageSlide"

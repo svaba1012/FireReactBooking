@@ -39,7 +39,6 @@ export const searchRooms =
       params: { type: "city", lat: location.lat, lon: location.lon },
     });
     let city = res.data.features[0].properties;
-    console.log(city);
 
     const locationRef = collection(db, "locations");
     const locQuery = query(locationRef, where("name", "==", city.city));
@@ -210,7 +209,6 @@ export const insertRoom = (room, navigate) => async (dispatch) => {
     });
 
     let city = res.data.features[0].properties;
-    console.log(city);
     let locationRef = collection(db, "locations");
     let locationQuery = query(locationRef, where("name", "==", city.city));
     let locSnapshot = await getDocs(locationQuery);
@@ -225,7 +223,6 @@ export const insertRoom = (room, navigate) => async (dispatch) => {
     }
 
     res = await addDoc(roomRef, room);
-    console.log(res);
     dispatch({ type: INSERT_ROOM, payload: res });
     dispatch({
       type: SET_STAGE,

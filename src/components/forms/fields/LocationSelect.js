@@ -67,14 +67,11 @@ function LocationSelect(props) {
       let res = await geoapify.get("/geocode/autocomplete", {
         params: { text: inputString, limit: 3 },
       });
-      console.log(res.data.features.map((el) => el.properties));
       return res.data.features.map((el) => el.properties);
     }
   };
 
   let { input, ...rest } = props;
-
-  console.log(input);
 
   return (
     <div style={{ position: "relative", width: props.width }}>

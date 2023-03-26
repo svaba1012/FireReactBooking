@@ -77,7 +77,7 @@ function RegisterFormSecondTabFirst(props) {
       {data.map((el, id) => {
         if (id === 1) {
           return (
-            <div>
+            <div key={id}>
               <h5>{el.label}</h5>
               <div className="row">
                 {el.arr.map((element, id1) => (
@@ -98,9 +98,9 @@ function RegisterFormSecondTabFirst(props) {
         }
 
         return (
-          <div>
+          <div key={id}>
             {id === 2 ? <hr /> : ""}
-            <div key={id} className={id === 0 ? "col-6 col-md-4" : "col-6"}>
+            <div className={id === 0 ? "col-6 col-md-4" : "col-6"}>
               <Field
                 component={classicInput}
                 name={el.name}
@@ -259,7 +259,7 @@ function RegisterFormForthTabFirst(props) {
 
 function RegisterFormForthTabSecond(props) {
   return (
-    <div>
+    <div className="col-lg-4 col-md-6 col-sm-12">
       <Field
         name="pricePerNight"
         component={classicInput}
@@ -377,7 +377,6 @@ function RegisterForm(props) {
   return (
     <Form
       onSubmit={(values) => {
-        console.log(values);
         values.cords = [values.cords.lat, values.cords.lng];
         props.insertRoom(values, navigate);
       }}
