@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./TabedCarousel.css";
 
 function getTabCountBefore(tabs, tabId) {
   return tabs.reduce((acc, el, id) => {
@@ -34,10 +35,10 @@ function TabedCarousel(props) {
               position: "relative",
 
               width: `${100 / props.tabs.length}%`,
-              height: "30px",
+
               marginBottom: "0px",
             }}
-            className=""
+            className="tab-name"
             key={id}
           >
             <h4
