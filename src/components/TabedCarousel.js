@@ -37,6 +37,7 @@ function TabedCarousel(props) {
               height: "30px",
               marginBottom: "0px",
             }}
+            className=""
             key={id}
           >
             <h4
@@ -47,6 +48,7 @@ function TabedCarousel(props) {
                 width: "100%",
                 textAlign: "center",
                 marginBottom: "0px",
+                fontSize: "1.4em",
               }}
             >
               {tab.name}
