@@ -45,7 +45,7 @@ function MapLocationMarker(props) {
         zoom={zoom}
         scrollWheelZoom={false}
         ref={setMap}
-        style={{ height: "50vh", width: "40vw" }}
+        style={{ height: "68vh", width: "100%" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       </MapContainer>
@@ -55,18 +55,8 @@ function MapLocationMarker(props) {
 
   return (
     <div style={{ position: "relative" }}>
-      <div
-        style={{
-          position: "absolute",
-          top: "19vh",
-          left: "19vw",
-          zIndex: 1000,
-        }}
-      >
-        <i
-          className="fa-solid fa-location-dot"
-          style={{ color: "blue", fontSize: "6vh" }}
-        ></i>
+      <div className="map-marker">
+        <i className="fa-solid fa-location-dot "></i>
       </div>
       {/* {map ? <DisplayPosition map={map} /> : null} */}
       {displayMap}

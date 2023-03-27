@@ -23,6 +23,9 @@ function SearchForm(props) {
             values.period.endDate.getTime() / 1000
           }&filter=${values.numberOfPeople}`
         );
+        if (props.isSearchPage) {
+          navigate(0);
+        }
       }}
       validate={props.validate}
       render={({ handleSubmit }) => (

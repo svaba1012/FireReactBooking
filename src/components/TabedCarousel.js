@@ -34,22 +34,23 @@ function TabedCarousel(props) {
               position: "relative",
 
               width: `${100 / props.tabs.length}%`,
-              height: "80px",
+              height: "30px",
               marginBottom: "0px",
             }}
             key={id}
           >
-            <div
+            <h4
               style={{
                 position: "absolute",
                 bottom: "0px",
 
                 width: "100%",
                 textAlign: "center",
+                marginBottom: "0px",
               }}
             >
-              <h3>{tab.name}</h3>
-            </div>
+              {tab.name}
+            </h4>
           </div>
         ))}
       </div>
@@ -146,14 +147,18 @@ function TabedCarousel(props) {
             marginLeft: "10px",
           }}
           onClick={() => {
-            props.onTabChanged(
-              activeTab,
-              (activeTab + 1) % props.children.length
-            );
-            setActiveTab((activeTab + 1) % props.children.length);
+            if (activeTab === 7) {
+              props.onNextSlideBtnClick();
+            } else {
+              props.onTabChanged(
+                activeTab,
+                (activeTab + 1) % props.children.length
+              );
+              setActiveTab((activeTab + 1) % props.children.length);
+            }
           }}
         >
-          Nastavi
+          {activeTab !== 7 ? "Nastavi" : "Registruj"}
         </button>
       </div>
     </div>

@@ -20,6 +20,7 @@ import {
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
   SEARCH_ROOMS,
+  SEARCH_ROOMS_SEARCHING,
   SET_STAGE,
 } from "./types";
 import { v4 } from "uuid";
@@ -33,6 +34,11 @@ export const searchRooms =
     if (!location) {
       return;
     }
+
+    dispatch({
+      type: SEARCH_ROOMS_SEARCHING,
+      payload: null,
+    });
 
     let locId;
     let res = await geoapify.get("/geocode/reverse", {

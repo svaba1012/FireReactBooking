@@ -400,6 +400,14 @@ function RegisterForm(props) {
                   props.getPlaceCords(values.address);
                 }
               }}
+              onNextSlideBtnClick={() => {
+                let errors = validateInputs(true, values);
+
+                if (Object.keys(errors).length === 0) {
+                  //if error is empty array
+                  handleSubmit(values);
+                }
+              }}
             >
               <RegisterFormFirstTabFirst locations={props.locations} />
               <RegisterFormFirstTabSecond
@@ -414,7 +422,7 @@ function RegisterForm(props) {
               <RegisterFormForthTabFirst />
               <RegisterFormForthTabSecond />
             </TabedCarousel>
-            <div>
+            {/* <div>
               <button
                 className="btn btn-primary"
                 onClick={() => {
@@ -424,7 +432,7 @@ function RegisterForm(props) {
               >
                 Registruj
               </button>
-            </div>
+            </div> */}
           </form>
         );
       }}

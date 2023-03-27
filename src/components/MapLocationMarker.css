@@ -2,3 +2,15 @@
   height: 800px;
   width: 100%;
 }
+
+.map-marker {
+  position: absolute;
+  top: calc(34vh - 40px);
+  left: calc(50% - 15px);
+  z-index: 1000;
+}
+
+.map-marker i {
+  color: blue;
+  font-size: 40px;
+}

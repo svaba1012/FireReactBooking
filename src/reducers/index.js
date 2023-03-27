@@ -6,13 +6,16 @@ import {
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
   SEARCH_ROOMS,
+  SEARCH_ROOMS_SEARCHING,
   SET_STAGE,
 } from "../actions/types";
 
-const searchRoomsReducer = (state = [], action) => {
+const searchRoomsReducer = (state = [-1], action) => {
   switch (action.type) {
     case SEARCH_ROOMS:
       return action.payload;
+    case SEARCH_ROOMS_SEARCHING:
+      return [-1];
     default:
       return [...state];
   }
