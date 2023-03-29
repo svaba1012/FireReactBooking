@@ -17,7 +17,7 @@ function PeriodInput(props) {
   ]);
   useEffect(() => {
     change("period", state[0]);
-  }, []);
+  }, [state]);
 
   const dateRef = useRef();
 

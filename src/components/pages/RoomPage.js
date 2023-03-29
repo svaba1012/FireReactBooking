@@ -15,13 +15,22 @@ import "./RoomPage.css";
 
 function RoomPage(props) {
   let params = useParams();
+  // let [user, setUser] = useState(auth.currentUser);
   useEffect(() => {
     props.getRoomById(params.id);
+    // let intervalId = setInterval(() => {
+    //   setUser(auth.currentUser);
+    //   if (auth.currentUser) {
+    //     clearInterval(intervalId);
+    //   }
+    // }, 100);
   }, []);
+
   let [isMapModalOpen, setIsMapModalOpen] = useState(false);
   if (!props.room.id) {
     return <div></div>;
   }
+
 
   const getCards = (room) => {
     let keys = getRoomKeys(room);
@@ -66,6 +75,7 @@ function RoomPage(props) {
     }, 0) / props.room.reviews.length;
   rating = Math.round(rating * 100) / 100;
 
+
   return (
     <div>
       <MapModal
@@ -85,9 +95,13 @@ function RoomPage(props) {
           <i className="bi bi-geo-alt-fill"></i>
           {props.room.address}, {props.room.location} - Prikazi mapu
         </h5>
-        <div title={`Ocena: ${rating}`} className="rating-box">
-          <Star rating={rating} />
-        </div>
+        {props.room.reviews.length > 0 ? (
+          <div title={`Ocena: ${rating}`} className="rating-box">
+            <Star rating={rating} />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <ImageCarousel
         id="imageSlide"
@@ -137,20 +151,22 @@ function RoomPage(props) {
         </div>
 
         <hr />
-        <p className="lead">{props.room.description}</p>
+        <p style={{ overflowWrap: "break-word" }} className="lead">
+          {props.room.description}
+        </p>
         <hr />
         <RoomReviews reviews={props.room.reviews} />
         <hr />
-        {auth.currentUser ? (
+        {auth.currentUser && auth.currentUser.uid !== props.room.userId ? (
           <div>
             <EvaluationForm />
             <hr />
+            <ReservationForm room={props.room}></ReservationForm>
           </div>
         ) : (
           ""
         )}
       </div>
-      <ReservationForm room={props.room}></ReservationForm>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import PeriodInput from "./fields/PeriodInput";
 import { connect } from "react-redux";
 import { reserveRoom } from "../../actions";
 import { subDays, eachDayOfInterval } from "date-fns";
+import { auth } from "../../config/firebase";
 
 function ReservationForm(props) {
   let disabledDates = [];
@@ -21,7 +22,8 @@ function ReservationForm(props) {
   return (
     <Form
       onSubmit={(values) => {
-        props.reserveRoom(props.room, values.period);
+        console.log(values);
+        props.reserveRoom(props.room, values.period, auth.currentUser);
       }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>

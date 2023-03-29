@@ -11,6 +11,7 @@ import PictureInput from "./fields/PictureInput";
 import textAreaInput from "./fields/textAreaInput";
 import MapLocationMarker from "../MapLocationMarker";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../../config/firebase";
 
 function RegisterFormFirstTabFirst(props) {
   return (
@@ -378,7 +379,7 @@ function RegisterForm(props) {
     <Form
       onSubmit={(values) => {
         values.cords = [values.cords.lat, values.cords.lng];
-        props.insertRoom(values, navigate);
+        props.insertRoom(values, navigate, auth.currentUser);
       }}
       initialValues={{
         type: "Apartman",

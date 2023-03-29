@@ -13,6 +13,28 @@ function EvaluationForm(props) {
         console.log({ ...values });
         props.insertReview(values, auth.currentUser.uid);
       }}
+      validate={(values) => {
+        let errors = {};
+        if (!values.evalStuff) {
+          errors.evalStuff = "*Oceni";
+        }
+        if (!values.evalThings) {
+          errors.evalThings = "*Oceni";
+        }
+        if (!values.evalClean) {
+          errors.evalClean = "*Oceni";
+        }
+        if (!values.evalLocation) {
+          errors.evalLocation = "*Oceni";
+        }
+        if (!values.evalComfor) {
+          errors.evalComfor = "*Oceni";
+        }
+        if (!values.evalPrice) {
+          errors.evalPrice = "*Oceni";
+        }
+        return errors;
+      }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <h3 style={{ textAlign: "center" }}>Ocenite</h3>

@@ -158,7 +158,7 @@ export const searchLocations = (searchStr) => async (dispatch) => {
   dispatch({ type: SEARCH_LOCATIONS, payload: locations });
 };
 
-export const insertRoom = (room, navigate) => async (dispatch) => {
+export const insertRoom = (room, navigate, curUser) => async (dispatch) => {
   const roomRef = collection(db, "rooms");
   let res;
   let picsFolder = `pics-${v4()}`;
@@ -228,6 +228,7 @@ export const insertRoom = (room, navigate) => async (dispatch) => {
       room.locationId = locations[0].id;
     }
 
+    room.userId = curUser.uid;
     res = await addDoc(roomRef, room);
     dispatch({ type: INSERT_ROOM, payload: res });
     dispatch({
@@ -317,19 +318,21 @@ export const getLocations = () => async (dispatch) => {
   dispatch({ type: GET_LOCATIONS, payload: locations });
 };
 
-export const reserveRoom = (room, dates) => async (dispatch, getState) => {
-  let reservationRef = collection(db, "reservations");
-  let reservation = {
-    startDate: dates.startDate.getTime() / 1000,
-    endDate: dates.endDate.getTime() / 1000,
-    roomId: room.id,
-    locationId: room.locationId,
-    userId: "",
-  };
+export const reserveRoom =
+  (room, dates, curUser) => async (dispatch, getState) => {
+    console.log(dates);
+    let reservationRef = collection(db, "reservations");
+    let reservation = {
+      startDate: dates.startDate.getTime() / 1000,
+      endDate: dates.endDate.getTime() / 1000,
+      roomId: room.id,
+      locationId: room.locationId,
+      userId: curUser.uid,
+    };
 
-  await addDoc(reservationRef, reservation);
-  dispatch({ type: RESERVE_ROOM, payload: reservation });
-};
+    await addDoc(reservationRef, reservation);
+    dispatch({ type: RESERVE_ROOM, payload: reservation });
+  };
 
 export const setStage =
   (

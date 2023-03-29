@@ -3,6 +3,7 @@ import {
   GET_LOCATIONS,
   GET_PLACE_CORDS,
   GET_ROOM_BY_ID,
+  INSERT_REVIEW,
   RESERVE_ROOM,
   SEARCH_LOCATIONS,
   SEARCH_ROOMS,
@@ -41,6 +42,14 @@ const roomReducer = (state = null, action) => {
       return {
         ...state,
         reservations: newReservations,
+      };
+    case INSERT_REVIEW:
+      let newReviews = [...state.reviews];
+      newReviews.push(action.payload);
+
+      return {
+        ...state,
+        reviews: newReviews,
       };
     default:
       return { ...state };

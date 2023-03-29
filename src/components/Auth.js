@@ -26,7 +26,7 @@ function Auth() {
 
   return (
     <button onClick={onButtonClick} className="btn btn-outline-danger">
-      Sign in <i className="bi bi-google"></i>
+      Prijavi se <i className="bi bi-google"></i>
     </button>
   );
 }
